@@ -17,6 +17,11 @@ It will try to auto fill and auto submit the login form if a matching password e
 - Download the last release of the plugin **[here](https://github.com/jvenant/passff/releases)**.
 - You can then manually install the plugin in Firefox from the addons page (Firefox/Add-ons/Install Add-on from File...)
 
+### Building from source
+
+For instructions on how to test, run and package the addon, please refer to
+[](https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/jpm#Installation).
+
 ### Usage
 A black icon with a P should appear in your Firefox toolbar.
 From here, you will be able to browse your password repository
