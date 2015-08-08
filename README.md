@@ -20,7 +20,7 @@ It will try to auto fill and auto submit the login form if a matching password e
 ### Building from source
 
 For instructions on how to test, run and package the addon, please refer to
-[](https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/jpm#Installation).
+https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/jpm.
 
 ### Usage
 A black icon with a P should appear in your Firefox toolbar.
