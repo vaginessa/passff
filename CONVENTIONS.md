@@ -14,9 +14,9 @@ At most 90 characters.
 
 Always terminate statements with semicolons.
 
-## In-line functions
+## Inline functions
 
-Please don't.
+Should have line breaks after the opening and before the closing brace.
 
 ```
 // good
@@ -47,7 +47,7 @@ if (true)
 
 ## Line breaking
 
-When breaking statements into multiple lines:
+PEP8-Style. When breaking statements into multiple lines:
 
 * Place function arguments one character to the right of the opening paranthesis.
 ```
