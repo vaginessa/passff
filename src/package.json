@@ -1,0 +1,54 @@
+{
+  "name": "passff",
+  "title": "PassFF",
+  "id": "jid1-gQi129pLYB9e6g@jetpack",
+  "description": "Password-Store integration for Firefox",
+  "author": "Johan Venant, Tobias Umbach, et al",
+  "license": "GPL 2.0",
+  "version": "1.0",
+
+  "preferences": [
+    {
+      "name": "storeDir",
+      "title": "Path of the password store directory",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "gpgAgentEnv",
+      "title": "Location of the .gpg-agent-info file",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "callType",
+      "title": "Method by which pass is called",
+      "type": "string",
+      "value": "shell"
+    },
+    {
+      "name": "shell",
+      "title": "Shell used to call pass",
+      "type": "string",
+      "value": "/bin/bash"
+    },
+    {
+      "name": "shellArgs",
+      "title": "Arguments for the shell pass is executed in",
+      "type": "string",
+      "value": "--login"
+    },
+    {
+      "name": "command",
+      "title": "Path of the pass script",
+      "type": "string",
+      "value": "/usr/local/bin/pass"
+    },
+    {
+      "name": "commandArgs",
+      "title": "Arguments for the pass script",
+      "type": "string",
+      "value": ""
+    }
+  ]
+}
