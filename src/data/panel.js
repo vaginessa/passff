@@ -5,7 +5,7 @@
 
 let entryList = document.getElementById('entry-list');
 
-self.port.on('update-root-items', function(items) {
+self.port.on('update-items', function(items) {
   entryList.innerHTML = '';
   items.forEach(function (item) {
     let entryOption = document.createElement('option');

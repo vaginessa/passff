@@ -21,5 +21,5 @@ var button = buttons.ActionButton({
   }
 });
 
-panel.port.emit('update-root-items', pass.getRootItems());
+panel.port.emit('update-items', pass.getRootItems());
 
