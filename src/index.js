@@ -16,7 +16,7 @@ var button = buttons.ActionButton({
     '64': './img/icon-64.png',
     '128': './img/icon-128.png'
   },
-  onClick: function() {
+  onClick: function () {
     panel.show({ position: button });
   }
 });

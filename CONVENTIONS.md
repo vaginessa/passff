@@ -28,6 +28,10 @@ toggleKey.addEventListener('command', function(event) {
 toggleKey.addEventListener('command', function(event) {event.target.ownerDocument.getElementById(PassFF.Ids.button).click();}, true);
 ```
 
+## Anonymous functions
+
+Always put a space between the function keyword and the opening paranthesis.
+
 ## Braces
 
 On the same line as the statement.

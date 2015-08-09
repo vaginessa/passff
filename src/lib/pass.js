@@ -6,12 +6,12 @@ var subprocess = require('lib/subprocess.jsm').subprocess;
 var prefs = require('sdk/simple-prefs').prefs;
 var {URL} = require('sdk/url');
 
-let Item = function(depth, key, parent) {
+let Item = function (depth, key, parent) {
   this.children = [];
   this.depth = depth;
   this.key = key;
 
-  this.fullKey = (function() {
+  this.fullKey = (function () {
     let fullKey = key;
     let loopParent = parent;
     while (loopParent) {
@@ -26,22 +26,22 @@ let Item = function(depth, key, parent) {
    * objects. Since we still need the parent reference elsewhere, this closure provides
    * a workaround.
    */
-  this.getParent = function() {
+  this.getParent = function () {
     return parent;
   };
 };
 
-Item.prototype.isLeaf = function() {
+Item.prototype.isLeaf = function () {
   return this.children.length === 0;
 };
 
-Item.prototype.hasFields = function() {
+Item.prototype.hasFields = function () {
   return this.children.some(function (element) {
     return element.isField();
   });
 };
 
-Item.prototype.isField = function() {
+Item.prototype.isField = function () {
   return this.isLeaf() && (isLoginField(this.key) || isPasswordField(this.key) ||
                            isUrlField(this.key));
 };
@@ -49,11 +49,11 @@ Item.prototype.isField = function() {
 var _items = [];
 var _rootItems = [];
 
-subprocess.registerDebugHandler(function(m) {
+subprocess.registerDebugHandler(function (m) {
   console.debug('[subprocess] ' + m);
 });
 
-subprocess.registerLogHandler(function(m) {
+subprocess.registerLogHandler(function (m) {
   console.error('[subprocess] ' + m);
 });
 
@@ -142,7 +142,7 @@ function getPasswordData(item) {
       }
     }
   } else { // hierarchical-style item
-    item.children.forEach(function(child) {
+    item.children.forEach(function (child) {
       if (child.isField()) {
         result[child.key] = getPasswordData(child).password;
       }
