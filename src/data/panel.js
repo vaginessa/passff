@@ -6,6 +6,13 @@
 let entryList = document.getElementById('entry-list');
 let itemStack = [];
 
+self.port.on('update-items', function (items) {
+  itemStack = [
+    { children: items }  // fake root item
+  ];
+  updateView();
+});
+
 function updateView() {
   entryList.innerHTML = '';
 
@@ -22,13 +29,6 @@ function updateView() {
   let top = itemStack[itemStack.length - 1];
   top.children.map(createEntryOption).forEach(entryList.appendChild.bind(entryList));
 }
-
-self.port.on('update-items', function (items) {
-  itemStack = [
-    { children: items }  // fake root item
-  ];
-  updateView();
-});
 
 function createEntryOption(item) {
   let entryOption = document.createElement('option');
