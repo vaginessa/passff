@@ -35,11 +35,33 @@ function createEntryOption(item) {
   entryOption.innerHTML = item.key;
   entryOption.item = item;
 
-  if (item.children.length > 0) {
+  if (typeof item.children == 'object' && item.children.length > 0) {
     entryOption.innerHTML += '/';
     entryOption.addEventListener('click', function () {
       itemStack.push(item);
       updateView();
+    });
+  } else if (typeof item.activate == 'function') {
+    entryOption.addEventListener('click', item.activate);
+  } else {
+    entryOption.addEventListener('click', function () {
+      item.children = [
+        { key: 'Fill',
+          activate: function () { console.log('Fill stub'); } },
+        { key: 'Fill and Submit',
+          activate: function () { console.log('Fill and submit stub'); } },
+        { key: 'Goto, fill and submit',
+          activate: function () { console.log('Goto, fill and submit stub'); } },
+        { key: 'Goto',
+          activate: function () { console.log('Goto stub'); } },
+        { key: 'Copy login',
+          activate: function () { console.log('Copy login stub'); } },
+        { key: 'Copy password',
+          activate: function () { console.log('Copy password stub'); } }
+      ];
+      itemStack.push(item);
+      updateView();
+      item.children = [];
     });
   }
 
