@@ -22,9 +22,8 @@ let Item = function (depth, key, parent) {
   })();
 
   /*
-   * Items are passed  using the Addon SDK event system, which does not permit cyclic
-   * objects. Since we still need the parent reference elsewhere, this closure provides
-   * a workaround.
+   * The Addon SDK event system doesn't allow cyclic objects, a closure is
+   * required.
    */
   this.getParent = function () {
     return parent;
