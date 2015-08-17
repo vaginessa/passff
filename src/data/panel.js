@@ -48,7 +48,8 @@ function createEntryOption(item) {
     entryOption.addEventListener('click', function () {
       item.children = [
         { key: 'Fill',
-          activate: function () { console.log('Fill stub'); } },
+          activate: self.port.emit.bind(this, 'fill', item)
+        },
         { key: 'Fill and Submit',
           activate: function () { console.log('Fill and submit stub'); } },
         { key: 'Goto, fill and submit',

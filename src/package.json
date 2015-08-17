@@ -49,6 +49,18 @@
       "title": "Arguments for the pass script",
       "type": "string",
       "value": ""
+    },
+    {
+      "name": "loginFieldNames",
+      "title": "Names for login fields",
+      "type": "string",
+      "value": "login,user,username,id"
+    },
+    {
+      "name": "passwordFieldNames",
+      "title": "Names for password fields",
+      "type": "string",
+      "value": "passwd,password,pass"
     }
   ]
 }

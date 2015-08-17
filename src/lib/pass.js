@@ -109,7 +109,7 @@ function reloadItems() {
 function getPasswordData(item) {
   let result = {};
 
-  if (item.isLeaf()) { // multiline-style item
+  if (item.children.length === 0) { // multiline-style item
     let args = [item.fullKey];
     let executionResult = executePass(args);
     let gpgDecryptFailed = executionResult.stderr
@@ -416,6 +416,8 @@ function getDirectEnvParams() {
 
   return params;
 }
+
+exports.getPasswordData = getPasswordData;
 
 exports.getRootItems = function() {
   return _rootItems;
