@@ -22,8 +22,7 @@ let Item = function (depth, key, parent) {
   })();
 
   /*
-   * The Addon SDK event system doesn't allow cyclic objects, a closure is
-   * required.
+   * The Addon SDK event system doesn't allow cyclic objects, thus a closure is needed.
    */
   this.getParent = function () {
     return parent;
@@ -423,4 +422,3 @@ function getDirectEnvParams() {
 exports.getRootItems = function() {
   return _rootItems;
 };
-
