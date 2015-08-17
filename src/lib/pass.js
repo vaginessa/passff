@@ -2,8 +2,8 @@
 /* global log */
 'use strict';
 
-var subprocess = require('lib/subprocess.jsm').subprocess;
-var prefs = require('sdk/simple-prefs').prefs;
+var {subprocess} = require('lib/subprocess.jsm');
+var {prefs} = require('sdk/simple-prefs');
 var {URL} = require('sdk/url');
 
 let Item = function (depth, key, parent) {

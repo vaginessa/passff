@@ -1,7 +1,7 @@
 let buttons = require('sdk/ui/button/action');
 let self = require('sdk/self');
 let tabs = require('sdk/tabs');
-let prefs = require('sdk/simple-prefs').prefs;
+let {prefs} = require('sdk/simple-prefs');
 let pass = require('lib/pass');
 
 let panel = require('sdk/panel').Panel({
