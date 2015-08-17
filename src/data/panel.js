@@ -27,7 +27,8 @@ function updateView() {
   }
 
   let top = itemStack[itemStack.length - 1];
-  top.children.map(createEntryOption).forEach(entryList.appendChild.bind(entryList));
+  top.children.map(createEntryOption)
+              .forEach(entryList.appendChild.bind(entryList));
 }
 
 function createEntryOption(item) {
@@ -67,4 +68,3 @@ function createEntryOption(item) {
 
   return entryOption;
 }
-
