@@ -147,35 +147,33 @@ function getPasswordData(item) {
     });
   }
 
-  setLogin(result, item);
-  setPassword(result);
-
-  return result;
+  return {'login': getLogin(result, item.key), 'password': getPassword(result)};
 }
 
-function setPassword(passwordData) {
+function getPassword(passwordData) {
   let password;
-  for (let i = 0; i < prefs.passwordFieldNames.length; i++) {
-    password = passwordData[prefs.passwordFieldNames[i].toLowerCase()];
-    if (password) {
-      break;
+  let passwordFields = prefs.passwordFieldNames.toLowerCase().split(',');
+
+  for (let i = 0; i < passwordFields.length; i++) {
+    if (passwordData.hasOwnProperty(passwordFields[i])) {
+      return passwordData[passwordFields[i]];
     }
   }
-  passwordData.password = password;
+
+  return '';
 }
 
-function setLogin(passwordData, item) {
+function getLogin(passwordData, key) {
   let login;
-  for (let i = 0; i < prefs.loginFieldNames.length; i++) {
-    login = passwordData[prefs.loginFieldNames[i].toLowerCase()];
-    if (login) {
-      break;
+  let loginFields = prefs.loginFieldNames.toLowerCase().split(',');
+
+  for (let i = 0; i < loginFields.length; i++) {
+    if (passwordData.hasOwnProperty(loginFields[i])) {
+      return passwordData[loginFields[i]];
     }
   }
-  if (!login) {
-    login = item.key;
-  }
-  passwordData.login = login;
+
+  return key;
 }
 
 function isLoginField(name) {
