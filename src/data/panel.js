@@ -51,7 +51,8 @@ function createEntryOption(item) {
           activate: self.port.emit.bind(this, 'fill', item)
         },
         { key: 'Fill and Submit',
-          activate: function () { console.log('Fill and submit stub'); } },
+          activate: self.port.emit.bind(this, 'fill-submit')
+        },
         { key: 'Goto, fill and submit',
           activate: function () { console.log('Goto, fill and submit stub'); } },
         { key: 'Goto',

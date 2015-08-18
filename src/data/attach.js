@@ -14,20 +14,31 @@ Array.prototype.remove = function (value) {
 let autoSubmittedUrls = [];
 let autoFillAndSubmitPending = false;
 
-self.port.on('fill',
-  function (passwordData, loginFieldNames, passwordFieldNames, iframeSearchDepth) {
-    getPasswordInputs(passwordFieldNames).forEach(function (input) {
-      input.value = passwordData.password;
-    });
-    getLoginInputs(loginFieldNames).forEach(function (input) {
-      input.value = passwordData.login;
-    });
+let passwordFieldNames;
+let loginFieldNames;
+let iframeSearchDepth;
 
-    processDocument(document, passwordData, iframeSearchDepth);
-  }
-);
+self.port.on('update-prefs', function (prefs) {
+  passwordFieldNames = prefs.passwordFieldNames.toLowerCase().split(',');
+  loginFieldNames = prefs.loginFieldNames.toLowerCase().split(',');
+  iframeSearchDepth = prefs.iframeSearchDepth;
+});
 
-function processDocument(doc, passwordData, iframeSearchDepth, depth = 0) {
+self.port.on('fill', processDocument);
+
+self.port.on('fill-submit', function () {
+  processDocument();
+
+});
+
+function processDocument(passwordData, doc = document, depth = 0) {
+  getPasswordInputs(passwordFieldNames).forEach(function (input) {
+    input.value = passwordData.password;
+  });
+  getLoginInputs(loginFieldNames).forEach(function (input) {
+    input.value = passwordData.login;
+  });
+
   if (depth <= iframeSearchDepth) {
     let iframes = doc.getElementsByTagName('iframe');
     Array.prototype.slice.call(iframes).forEach(function (iframe) {
