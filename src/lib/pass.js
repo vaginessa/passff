@@ -2,9 +2,9 @@
 /* global log */
 'use strict';
 
-var {subprocess} = require('lib/subprocess.jsm');
-var {prefs} = require('sdk/simple-prefs');
-var {URL} = require('sdk/url');
+let {subprocess} = require('lib/subprocess.jsm');
+let {prefs} = require('sdk/simple-prefs');
+let {URL} = require('sdk/url');
 
 let Item = function (depth, key, parent) {
   this.children = [];
@@ -44,8 +44,8 @@ Item.prototype.isField = function () {
                            isUrlField(this.key));
 };
 
-var _items = [];
-var _rootItems = [];
+let items = [];
+let rootItems = [];
 
 subprocess.registerDebugHandler(function (m) {
   console.debug('[subprocess] ' + m);
@@ -63,8 +63,8 @@ function reloadItems() {
     return;
   }
 
-  _rootItems = [];
-  _items = [];
+  rootItems = [];
+  items = [];
 
   let stdout = result.stdout;
   // replace utf8 box characters with traditional ascii tree
@@ -97,13 +97,13 @@ function reloadItems() {
     }
 
     currentParent = item;
-    _items.push(item);
+    items.push(item);
 
     if (item.depth === 0) {
-      _rootItems.push(item);
+      rootItems.push(item);
     }
   }
-  console.debug('Found Items', _rootItems);
+  console.debug('Found Items', rootItems);
 }
 
 function getPasswordData(item) {
@@ -199,7 +199,7 @@ function getMatchingItems(search, limit) {
   let matches = [];
 
   try {
-    _items.forEach(function(item) {
+    items.forEach(function(item) {
       let flags = prefs.caseInsensitiveSearch ? 'i' : '';
       let regex = new RegExp(searchRegex, flags);
 
@@ -223,7 +223,7 @@ function getUrlMatchingItems(urlStr) {
   let url = new URL(urlStr);
   console.debug('Search items for:', url);
 
-  let matchingItems = _items.map(function(item) {
+  let matchingItems = items.map(function(item) {
     return getItemQuality(item, urlStr);
   }).filter(function(item) {
     return item.quality >= 0;
@@ -404,7 +404,7 @@ function executePass(args) {
 }
 
 function getDirectEnvParams() {
-  var params = ['PATH=' + prefs.path];
+  let params = ['PATH=' + prefs.path];
 
   if (prefs.storeDir.trim().length > 0) {
     params.push('PASSWORD_STORE_DIR=' + prefs.storeDir);
@@ -420,5 +420,5 @@ function getDirectEnvParams() {
 exports.getPasswordData = getPasswordData;
 
 exports.getRootItems = function() {
-  return _rootItems;
+  return rootItems;
 };
