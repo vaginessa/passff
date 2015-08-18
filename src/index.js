@@ -1,3 +1,6 @@
+/* jshint node: true */
+'use strict';
+
 let buttons = require('sdk/ui/button/action');
 let self = require('sdk/self');
 let tabs = require('sdk/tabs');

@@ -1,6 +1,7 @@
 /* jshint node: true */
 /* global self */
 /* global document */
+/* global log */
 'use strict';
 
 Array.prototype.remove = function (value) {
