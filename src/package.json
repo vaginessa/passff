@@ -5,7 +5,7 @@
   "description": "Password-Store integration for Firefox",
   "author": "Johan Venant, Tobias Umbach, et al",
   "license": "GPL 2.0",
-  "version": "1.0",
+  "version": "1.0.0",
 
   "preferences": [
     {
