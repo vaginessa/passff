@@ -1,10 +1,9 @@
 /* jshint node: true */
 /* global self */
 /* global document */
-/* global log */
 'use strict';
 
-Array.prototype.remove = function (value) {
+Array.prototype.remove = function(value) {
   let index = this.indexOf(value);
   if (index >= 0) {
     this.splice(index, 1);
@@ -19,70 +18,63 @@ let passwordFieldNames;
 let loginFieldNames;
 let iframeSearchDepth;
 
-self.port.on('update-prefs', function (prefs) {
+self.port.on('update-prefs', function(prefs) {
   passwordFieldNames = prefs.passwordFieldNames.toLowerCase().split(',');
   loginFieldNames = prefs.loginFieldNames.toLowerCase().split(',');
   iframeSearchDepth = prefs.iframeSearchDepth;
+  console.log(passwordFieldNames);
+  console.log(loginFieldNames);
 });
 
 self.port.on('fill', processDocument);
 
-self.port.on('fill-submit', function () {
-  processDocument();
-
+self.port.on('fill-submit', function(passwordData) {
+  processDocument(passwordData);
+  submit();
 });
 
 function processDocument(passwordData, doc = document, depth = 0) {
-  getPasswordInputs(passwordFieldNames).forEach(function (input) {
+  getPasswordInputs(passwordFieldNames).forEach(function(input) {
     input.value = passwordData.password;
   });
-  getLoginInputs(loginFieldNames).forEach(function (input) {
+  getLoginInputs(loginFieldNames).forEach(function(input) {
     input.value = passwordData.login;
   });
 
   if (depth <= iframeSearchDepth) {
     let iframes = doc.getElementsByTagName('iframe');
-    Array.prototype.slice.call(iframes).forEach(function (iframe) {
+    Array.prototype.slice.call(iframes).forEach(function(iframe) {
       processDocument(iframe.contentDocument, passwordData, depth++);
     });
   }
 }
 
-function searchParentForm(input) {
-  while (input !== null && input.tagName.toLowerCase() != 'form') {
-    input = input.parentNode;
-  }
-  return input;
-}
-
-function submit(url) {
-  if (autoSubmittedUrls.remove(url)) {
-    log.info('Url already submit. skip it');
+function submit() {
+  let passwordInputs = getPasswordInputs(passwordFieldNames);
+  if (passwordInputs.length === 0) {
     return;
   }
 
-  let passwords = getPasswordInputs();
-  if (passwords.length === 0) {
-    return;
-  }
+  let form = (function(input) {
+    while (input !== null && input.tagName.toLowerCase() != 'form') {
+      input = input.parentNode;
+    }
+    return input;
+  })(passwordInputs[0]);
 
-  log.debug('Url never submit. Submit it', url);
-
-  let form = searchParentForm(passwords[0]);
   if (!form) {
-    log.debug('No form found to submit');
+    console.debug('No form found to submit');
     return;
   }
 
-  log.debug('Found form to submit', form);
-  autoSubmittedUrls.push(url);
-  let submitBtn = getSubmitButton(form);
+  console.debug('Found form to submit', form);
+  let submitButton = getSubmitButton(form);
 
-  if (submitBtn) {
-    log.info('Click submit button');
-    submitBtn.click();
+  if (submitButton) {
+    console.info('Click submit button');
+    submitButton.click();
   } else {
-    log.info('Submit form');
+    console.info('Submit form');
     form.submit();
   }
 }
@@ -100,7 +92,7 @@ function matchFieldName(fieldName, goodFieldNames) {
 
 function getLoginInputs(loginInputNames) {
   let inputArray = Array.prototype.slice.call(document.getElementsByTagName('input'));
-  return inputArray.filter(function (input) {
+  return inputArray.filter(function(input) {
     return (input.type == 'text' || input.type == 'email' || input.type == 'tel') &&
             matchFieldName(input.name, loginInputNames);
   });
@@ -108,7 +100,7 @@ function getLoginInputs(loginInputNames) {
 
 function getPasswordInputs(passwordInputNames) {
   let inputArray = Array.prototype.slice.call(document.getElementsByTagName('input'));
-  return inputArray.filter(function (input) {
+  return inputArray.filter(function(input) {
     return (input.type == 'password' && matchFieldName(input.name, passwordInputNames));
   });
 }
@@ -126,3 +118,4 @@ function getSubmitButton(form) {
 
   return Array.prototype.slice.call(buttons, buttons.length - 1, buttons.length)[0];
 }
+

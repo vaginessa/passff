@@ -2,6 +2,7 @@
 'use strict';
 
 let buttons = require('sdk/ui/button/action');
+let prefs = require('sdk/simple-prefs').prefs;
 let self = require('sdk/self');
 let tabs = require('sdk/tabs');
 
@@ -34,4 +35,10 @@ panel.port.on('fill', function (item) {
   workers.getWorker(tabs.activeTab).port.emit('fill', pass.getPasswordData(item));
 });
 
+panel.port.on('fill-submit', function (item) {
+  panel.hide();
+  workers.getWorker(tabs.activeTab).port.emit('fill-submit', pass.getPasswordData(item));
+});
+
 panel.port.emit('update-items', pass.getRootItems());
+
