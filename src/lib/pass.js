@@ -6,28 +6,23 @@ let {subprocess} = require('lib/subprocess.jsm');
 let {prefs} = require('sdk/simple-prefs');
 let {URL} = require('sdk/url');
 
-let Item = function (depth, key, parent) {
+let Item = function (depth, key, parentFullKey) {
   this.children = [];
   this.depth = depth;
   this.key = key;
+  this.parentFullKey = parentFullKey;
+  this.fullKey = parentFullKey == null ? key : parentFullKey + '/' + key;
+}
 
-  this.fullKey = (function () {
-    let fullKey = key;
-    let loopParent = parent;
-    while (loopParent) {
-      fullKey = loopParent.key + '/' + fullKey;
-      loopParent = loopParent.parent;
-    }
-    return fullKey;
-  })();
-
-  /*
-   * The Addon SDK event system doesn't allow cyclic objects, thus a closure is needed.
-   */
-  this.getParent = function () {
-    return parent;
-  };
-};
+  //Item.prototype.fullKey = function () {
+    //let fullKey = this.key;
+    //let loopParent = getItemByFullKey(this.parentFullKey);
+    //while (loopParent) {
+      //fullKey = loopParent.key + '/' + fullKey;
+      //loopParent = getItemByFullKey(loopParent.parentFullKey);
+    //}
+    //return fullKey;
+  //};
 
 Item.prototype.isLeaf = function () {
   return this.children.length === 0;
@@ -40,8 +35,7 @@ Item.prototype.hasFields = function () {
 };
 
 Item.prototype.isField = function () {
-  return this.isLeaf() && (isLoginField(this.key) || isPasswordField(this.key) ||
-                           isUrlField(this.key));
+  return this.isLeaf() && (isLoginField(this.key) || isPasswordField(this.key) || isUrlField(this.key));
 };
 
 let items = [];
@@ -58,6 +52,7 @@ subprocess.registerLogHandler(function (m) {
 reloadItems();
 
 function reloadItems() {
+  console.log("reloadItems");
   let result = executePass([]);
   if (result.exitCode !== 0) {
     return;
@@ -87,10 +82,10 @@ function reloadItems() {
     let key = match[2].replace(/\\ /g, ' ').replace(/ -> .*/g, '');
 
     while (currentParent !== null && currentParent.depth >= currentDepth) {
-      currentParent = currentParent.getParent();
+      currentParent = getItemByFullKey(currentParent.parentFullKey);
     }
 
-    let item = new Item(currentDepth, key, currentParent);
+    let item = new Item(currentDepth, key, currentParent == null ? null : currentParent.fullKey);
 
     if (currentParent !== null) {
       currentParent.children.push(item);
@@ -217,6 +212,13 @@ function getMatchingItems(search, limit) {
     }
   }
   return matches;
+}
+
+function getItemByFullKey(fullKey) {
+  let foundItem = items.find(function(item) {
+    return item.fullKey == fullKey;
+  })
+  return (typeof foundItem == 'undefined') ? null : foundItem;
 }
 
 function getUrlMatchingItems(urlStr) {

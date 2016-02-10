@@ -34,17 +34,23 @@ self.port.on('fill-submit', function(passwordData) {
 });
 
 function processDocument(passwordData, doc = document, depth = 0) {
+  console.log("processDocument", passwordData);
+  console.log("search password inputs", passwordFieldNames);
   getPasswordInputs(passwordFieldNames).forEach(function(input) {
+    console.log("find password input", input);
     input.value = passwordData.password;
   });
+  console.log("search login inputs", loginFieldNames);
   getLoginInputs(loginFieldNames).forEach(function(input) {
+    console.log("find login input", input);
     input.value = passwordData.login;
   });
 
   if (depth <= iframeSearchDepth) {
     let iframes = doc.getElementsByTagName('iframe');
     Array.prototype.slice.call(iframes).forEach(function(iframe) {
-      processDocument(iframe.contentDocument, passwordData, depth++);
+      console.log("find iframes to process", depth, iframe);
+      processDocument(passwordData, frame.contentDocument, depth++);
     });
   }
 }
@@ -100,6 +106,7 @@ function getLoginInputs(loginInputNames) {
 
 function getPasswordInputs(passwordInputNames) {
   let inputArray = Array.prototype.slice.call(document.getElementsByTagName('input'));
+  console.log("inputs", inputArray)
   return inputArray.filter(function(input) {
     return (input.type == 'password' && matchFieldName(input.name, passwordInputNames));
   });
