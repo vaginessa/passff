@@ -27,8 +27,7 @@ function updateView() {
   }
 
   let top = itemStack[itemStack.length - 1];
-  top.children.map(createEntryOption)
-              .forEach(entryList.appendChild.bind(entryList));
+  top.children.map(createEntryOption).forEach(entryList.appendChild.bind(entryList));
 }
 
 function createEntryOption(item) {
@@ -47,20 +46,12 @@ function createEntryOption(item) {
   } else {
     entryOption.addEventListener('click', function () {
       item.children = [
-        { key: 'Fill',
-          activate: self.port.emit.bind(this, 'fill', item)
-        },
-        { key: 'Fill and Submit',
-          activate: self.port.emit.bind(this, 'fill-submit', item)
-        },
-        { key: 'Goto, fill and submit',
-          activate: function () { console.log('Goto, fill and submit stub'); } },
-        { key: 'Goto',
-          activate: function () { console.log('Goto stub'); } },
-        { key: 'Copy login',
-          activate: function () { console.log('Copy login stub'); } },
-        { key: 'Copy password',
-          activate: function () { console.log('Copy password stub'); } }
+        { key: 'Fill', activate: self.port.emit.bind(this, 'fill', item) },
+        { key: 'Fill and Submit', activate: self.port.emit.bind(this, 'fill-submit', item) },
+        { key: 'Goto, fill and submit', activate:  self.port.emit.bind(this, 'goto-fill-submit', item) },
+        { key: 'Goto', activate:  self.port.emit.bind(this, 'goto', item) },
+        { key: 'Copy login', activate:  self.port.emit.bind(this, 'copy-login', item) },
+        { key: 'Copy password', activate:  self.port.emit.bind(this, 'copy-password', item) } 
       ];
       itemStack.push(item);
       updateView();

@@ -107,8 +107,7 @@ function getPasswordData(item) {
   if (item.children.length === 0) { // multiline-style item
     let args = [item.fullKey];
     let executionResult = executePass(args);
-    let gpgDecryptFailed = executionResult.stderr
-                           .indexOf('gpg: decryption failed: No secret key') >= 0;
+    let gpgDecryptFailed = executionResult.stderr.indexOf('gpg: decryption failed: No secret key') >= 0;
 
     while (executionResult.exitCode !== 0 && gpgDecryptFailed) {
       console.error("gpg-agent error occured");
@@ -142,7 +141,7 @@ function getPasswordData(item) {
     });
   }
 
-  return {'login': getLogin(result, item.key), 'password': getPassword(result)};
+  return {'login': getLogin(result, item.key), 'password': getPassword(result), 'url': result.url};
 }
 
 function getPassword(passwordData) {
