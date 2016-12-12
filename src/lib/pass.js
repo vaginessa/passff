@@ -107,16 +107,9 @@ function getPasswordData(item) {
   if (item.children.length === 0) { // multiline-style item
     let args = [item.fullKey];
     let executionResult = executePass(args);
-    let gpgDecryptFailed = executionResult.stderr.indexOf('gpg: decryption failed: No secret key') >= 0;
-
-    while (executionResult.exitCode !== 0 && gpgDecryptFailed) {
-      console.error("gpg-agent error occured");
-      return;
-
-      // executionResult = executePass(args);
-    }
 
     if (executionResult.exitCode !== 0) {
+      console.error('Pass execution failed:', executionResult);
       return;
     }
 
@@ -133,6 +126,7 @@ function getPasswordData(item) {
         result[attributeName] = attributeValue.trim();
       }
     }
+    result.fullText = executionResult.stdout;
   } else { // hierarchical-style item
     item.children.forEach(function (child) {
       if (child.isField()) {
@@ -141,7 +135,12 @@ function getPasswordData(item) {
     });
   }
 
-  return {'login': getLogin(result, item.key), 'password': getPassword(result), 'url': result.url};
+  return {
+    'login': getLogin(result, item.key),
+    'password': getPassword(result),
+    'url': result.url,
+    'fullText': result.fullText
+  };
 }
 
 function getPassword(passwordData) {

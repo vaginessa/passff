@@ -58,7 +58,8 @@ function createEntryOption(item) {
         { key: 'Goto, fill and submit', activate:  self.port.emit.bind(this, 'goto-fill-submit', item) },
         { key: 'Goto', activate:  self.port.emit.bind(this, 'goto', item) },
         { key: 'Copy login', activate:  self.port.emit.bind(this, 'copy-login', item) },
-        { key: 'Copy password', activate:  self.port.emit.bind(this, 'copy-password', item) }
+        { key: 'Copy password', activate:  self.port.emit.bind(this, 'copy-password', item) },
+        { key: 'Display', activate:  self.port.emit.bind(this, 'display-password', item) }
       ];
       itemStack.push(item);
       updateView();
