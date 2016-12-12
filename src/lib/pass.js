@@ -2,7 +2,7 @@
 /* global log */
 'use strict';
 
-let {subprocess} = require('lib/subprocess.jsm');
+let {subprocess} = require('./subprocess.jsm');
 let {prefs} = require('sdk/simple-prefs');
 let {URL} = require('sdk/url');
 
@@ -240,8 +240,9 @@ function getUrlMatchingItems(urlStr) {
 }
 
 function getItemQuality(item, urlStr) {
+  let noMatch = {item: null, quality: -1};
   let url = new URL(urlStr);
-  let hostGroupToMatch = url.host;
+  let hostGroupToMatch = url.host || url.href;
   let hostGroupToMatchSplit = hostGroupToMatch.split('\.');
   let tldName = '';
   if (hostGroupToMatchSplit.length >= 2) {
@@ -277,7 +278,7 @@ function getItemQuality(item, urlStr) {
 
   } while (true);
 
-  return {item: null,  quality: -1};
+  return noMatch;
 }
 
 function findBestFitItem(items, urlStr) {
@@ -419,7 +420,9 @@ function getDirectEnvParams() {
 }
 
 exports.getPasswordData = getPasswordData;
-
 exports.getRootItems = function() {
   return rootItems;
 };
+exports.getMatchingItems = getMatchingItems;
+exports.getUrlMatchingItems = getUrlMatchingItems;
+exports.reloadItems = reloadItems;

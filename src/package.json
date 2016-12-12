@@ -61,6 +61,12 @@
       "title": "Names for password fields",
       "type": "string",
       "value": "passwd,password,pass"
+    },
+    {
+      "name": "urlFieldNames",
+      "title": "Names for URL fields",
+      "type": "string",
+      "value": "url,www"
     }
   ]
 }

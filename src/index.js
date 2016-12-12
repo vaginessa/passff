@@ -76,6 +76,25 @@ panel.port.on('copy-password', function (item) {
     panel.hide();
     copyToClipboard(pass.getPasswordData(item).password);
 });
+panel.port.on('search', function (searchTerm) {
+  let searchResults = pass.getMatchingItems(searchTerm, 20);
+  panel.port.emit('update-items', searchResults);
+});
+panel.port.on('refresh-items', function(searchTerm) {
+  pass.reloadItems();
+  let items = pass.getRootItems();
+  if (/\S/.test(searchTerm)) {
+    items = pass.getMatchingItems(searchTerm, 20);
+  }
+  panel.port.emit('update-items', items);
+});
+panel.port.on('display-contextual', function() {
+  let activeURL = tabs.activeTab.url;
+  panel.port.emit('update-items', pass.getUrlMatchingItems(activeURL));
+});
+panel.port.on('display-all', function() {
+  panel.port.emit('update-items', pass.getRootItems());
+});
 
 panel.port.emit('update-items', pass.getRootItems());
 //
