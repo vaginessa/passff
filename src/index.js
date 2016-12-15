@@ -1,7 +1,6 @@
 /* jshint node: true */
 'use strict';
 
-//const Cc = Components.classes
 let { Cc, Ci } = require('chrome');
 
 let buttons = require('sdk/ui/button/action');
@@ -101,11 +100,11 @@ panel.port.on('display-all', function() {
 });
 
 panel.port.emit('update-items', pass.getRootItems());
-//
+
 // Listen for tab openings.
-//tabs.on('open', function onOpen(tab) {
-//myOpenTabs.push(tab);
-//});
+// tabs.on('open', function onOpen(tab) {
+//   myOpenTabs.push(tab);
+// });
 
 // Listen for tab content loads.
 tabs.on('ready', function(tab) {
@@ -120,3 +119,22 @@ tabs.on('ready', function(tab) {
     }
   }
 });
+
+exports.main = function(options) {
+  if (options.loadReason === 'install') {
+    // Add-on was just installed. Set intelligent initial preferences
+    let osString = Cc["@mozilla.org/xre/app-info;1"]
+                     .getService(Ci.nsIXULRuntime)
+                     .OS;
+    console.info("PassFF installed");
+
+    if (osString === 'Darwin') {
+      console.log("Overriding initial preferences for OS X");
+      prefs.command   = '/usr/local/bin/pass';
+      prefs.shellArgs = '--login';
+      prefs.callType  = 'shell';
+    } else {
+      console.log("OS is " + osString + ". Using default preferences");
+    }
+  }
+};

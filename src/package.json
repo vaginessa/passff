@@ -7,6 +7,7 @@
   "license": "GPL 2.0",
   "version": "1.0.0",
 
+  "preferences-branch": "passff",
   "preferences": [
     {
       "name": "storeDir",
@@ -24,7 +25,7 @@
       "name": "callType",
       "title": "Method by which pass is called",
       "type": "string",
-      "value": "shell"
+      "value": "direct"
     },
     {
       "name": "shell",
@@ -42,7 +43,7 @@
       "name": "command",
       "title": "Path of the pass script",
       "type": "string",
-      "value": "/usr/local/bin/pass"
+      "value": "/usr/bin/pass"
     },
     {
       "name": "commandArgs",
@@ -66,7 +67,7 @@
       "name": "urlFieldNames",
       "title": "Names for URL fields",
       "type": "string",
-      "value": "url,www"
+      "value": "url,http,www"
     }
   ]
 }
