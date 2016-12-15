@@ -12,6 +12,10 @@ let displayContextualButton = document.getElementById('display-contextual');
 let displayAllButton = document.getElementById('display-all');
 let itemStack = [];
 
+self.port.on('menu-opened', function (items) {
+  searchBox.focus();
+});
+
 self.port.on('update-items', function (items) {
   console.log("Updating items");
   itemStack = [

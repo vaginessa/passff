@@ -43,6 +43,7 @@ let button = buttons.ActionButton({
 
   onClick: function () {
     panel.show({ position: button });
+    panel.port.emit('menu-opened');
   }
 });
 
