@@ -80,6 +80,24 @@ panel.port.on('display-password', function (item) {
   panel.hide();
   workers.getWorker(tabs.activeTab).port.emit('display-password', pass.getPasswordData(item).fullText);
 });
+panel.port.on('enter-pressed', function (item) {
+  panel.hide();
+  let worker = workers.getWorker(tabs.activeTab);
+  let passwordData = pass.getPasswordData(item)
+  switch (prefs.enterBehavior) {
+    case 0: // goto, fill, submit
+      // DUP: 'goto-fill-submit' handler above
+      autoFillItems.push({'tab': tabs.activeTab, 'item': item})
+      tabs.activeTab.url = pass.getPasswordData(item).url
+      break;
+    case 1: // fill, submit
+      worker.port.emit('fill-submit', passwordData);
+      break;
+    case 2: // fill
+      worker.port.emit('fill', passwordData);
+      break;
+  }
+});
 panel.port.on('search', function (searchTerm) {
   let searchResults = pass.getMatchingItems(searchTerm, 20);
   panel.port.emit('update-items', searchResults);

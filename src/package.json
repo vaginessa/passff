@@ -68,6 +68,26 @@
       "title": "Names for URL fields",
       "type": "string",
       "value": "url,http,www"
+    },
+    {
+      "name": "enterBehavior",
+      "title": "What happens when you press Enter when searching for a password",
+      "type": "menulist",
+      "value": 0,
+      "options": [
+        {
+          "value": 0,
+          "label": "Go to URL, fill, submit"
+        },
+        {
+          "value": 1,
+          "label": "Fill, submit"
+        },
+        {
+          "value": 2,
+          "label": "Fill"
+        }
+      ]
     }
   ]
 }

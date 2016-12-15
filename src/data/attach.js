@@ -122,4 +122,3 @@ function getSubmitButton(form) {
 
   return Array.prototype.slice.call(buttons, buttons.length - 1, buttons.length)[0];
 }
-
