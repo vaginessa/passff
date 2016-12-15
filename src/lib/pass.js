@@ -14,16 +14,6 @@ let Item = function (depth, key, parentFullKey) {
   this.fullKey = parentFullKey == null ? key : parentFullKey + '/' + key;
 }
 
-  //Item.prototype.fullKey = function () {
-    //let fullKey = this.key;
-    //let loopParent = getItemByFullKey(this.parentFullKey);
-    //while (loopParent) {
-      //fullKey = loopParent.key + '/' + fullKey;
-      //loopParent = getItemByFullKey(loopParent.parentFullKey);
-    //}
-    //return fullKey;
-  //};
-
 Item.prototype.isLeaf = function () {
   return this.children.length === 0;
 };
@@ -345,7 +335,7 @@ function executePass(args) {
   if (prefs.callType == 'direct') {
     command = prefs.command;
     environment = environment.concat(getDirectEnvParams());
-    prefs.commandArgs.forEach(function(value) {
+    prefs.commandArgs.split(' ').forEach(function(value) {
       if (value && value.trim().length > 0) {
         scriptArgs.push(value);
       }
@@ -358,7 +348,7 @@ function executePass(args) {
     command = prefs.shell;
     let passCmd = prefs.command;
     prefs.commandArgs.split(' ').forEach(function(value) {
-      if (value.trim().length > 0) {
+      if (value && value.trim().length > 0) {
         passCmd += ' ' + value;
       }
     });
@@ -405,9 +395,12 @@ function executePass(args) {
 }
 
 function getDirectEnvParams() {
-  let params = ['PATH=' + prefs.path];
+  let params = [];
+  if (prefs.path && prefs.path.trim().length > 0) {
+    params.push('PATH=' + prefs.path);
+  }
 
-  if (prefs.storeDir.trim().length > 0) {
+  if (prefs.storeDir && prefs.storeDir.trim().length > 0) {
     params.push('PASSWORD_STORE_DIR=' + prefs.storeDir);
   }
 
