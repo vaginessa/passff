@@ -65,6 +65,12 @@ simplePrefs.on('hotkey', function() {
   }
 });
 
+
+let setContextualMenuItems = function() {
+  let activeURL = tabs.activeTab.url;
+  panel.port.emit('update-items', pass.getUrlMatchingItems(activeURL));
+};
+
 panel.port.on('fill', function (item) {
   panel.hide();
   workers.getWorker(tabs.activeTab).port.emit('fill', pass.getPasswordData(item));
@@ -133,26 +139,17 @@ panel.port.on('refresh-items', function(searchTerm) {
   }
   panel.port.emit('update-items', items);
 });
-panel.port.on('display-contextual', function() {
-  let activeURL = tabs.activeTab.url;
-  panel.port.emit('update-items', pass.getUrlMatchingItems(activeURL));
-});
+panel.port.on('display-contextual', setContextualMenuItems);
 panel.port.on('display-all', function() {
   panel.port.emit('update-items', pass.getRootItems());
 });
 
-// Listen for tab openings.
-// tabs.on('open', function onOpen(tab) {
-//   myOpenTabs.push(tab);
-// });
+// Update the menu items to match the new URL as tabs open or switch
+tabs.on('activate', setContextualMenuItems);
+tabs.on('pageshow', setContextualMenuItems);
 
-// Listen for tab content loads.
+// If necessary, auto-fill when a new tab is loaded
 tabs.on('ready', function(tab) {
-  // switch the context of the menu
-  let activeURL = tabs.activeTab.url;
-  panel.port.emit('update-items', pass.getUrlMatchingItems(activeURL));
-
-  // auto-fill, if necessary
   let elm = autoFillItems.find(function(elm) { return elm.tab == tab })
   if (elm) {
     workers.getWorker(tabs.activeTab).port.emit('fill-submit', pass.getPasswordData(elm.item));
