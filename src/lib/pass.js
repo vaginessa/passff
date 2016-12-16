@@ -183,8 +183,7 @@ function getMatchingItems(search, limit) {
 
   try {
     items.forEach(function(item) {
-      let flags = prefs.caseInsensitiveSearch ? 'i' : '';
-      let regex = new RegExp(searchRegex, flags);
+      let regex = new RegExp(searchRegex, 'i');
 
       if ((item.isLeaf() || item.hasFields()) && item.fullKey.search(regex) >= 0) {
         matches.push(item);
