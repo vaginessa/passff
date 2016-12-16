@@ -4,9 +4,11 @@
 let { Cc, Ci } = require('chrome');
 
 let buttons = require('sdk/ui/button/action');
-let prefs = require('sdk/simple-prefs').prefs;
+let simplePrefs = require('sdk/simple-prefs');
+let prefs = simplePrefs.prefs;
 let self = require('sdk/self');
 let tabs = require('sdk/tabs');
+let { Hotkey } = require('sdk/hotkeys');
 
 let workers = require('lib/workers');
 let pass = require('lib/pass');
@@ -30,20 +32,36 @@ let copyToClipboard = function(text) {
   clip.setData(trans, null, Ci.nsIClipboard.kGlobalClipboard);
 }
 
-let button = buttons.ActionButton({
+let button;
+let showPanel = function() {
+  panel.show({ position: button });
+  panel.port.emit('menu-opened');
+};
+button = buttons.ActionButton({
   id: 'passff-button',
   label: 'PassFF',
-
   icon: {
     '16': './img/icon-16.png',
     '32': './img/icon-32.png',
     '64': './img/icon-64.png',
     '128': './img/icon-128.png'
   },
-
-  onClick: function () {
-    panel.show({ position: button });
-    panel.port.emit('menu-opened');
+  onClick: showPanel
+});
+// Set the global hotkey
+var hotkey;
+try {
+  hotkey = Hotkey({combo: prefs.hotkey, onPress: showPanel});
+} catch (e) {
+  console.error("Invalid hotkey:", prefs.hotkey, e);
+}
+// Update hotkey if user changes it
+simplePrefs.on('hotkey', function() {
+  hotkey && hotkey.destroy && hotkey.destroy(); // destroy old hotkey
+  try {
+    hotkey = Hotkey({combo: prefs.hotkey, onPress: showPanel});
+  } catch (e) {
+    console.debug("Invalid hotkey:", prefs.hotkey, e);
   }
 });
 
