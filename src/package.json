@@ -40,6 +40,13 @@
       "value": "--login"
     },
     {
+      "name": "path",
+      "title": "PATH for shell environment",
+      "description": "Only used for 'Through shell' call method. Leave blank for default",
+      "type": "string",
+      "value": ""
+    },
+    {
       "name": "command",
       "title": "Path of the pass script",
       "type": "string",
@@ -126,6 +133,13 @@
       "description": "Leave blank for the default",
       "type": "string",
       "value": ""
+    },
+    {
+      "name": "iframeSearchDepth",
+      "title": "Iframe search depth",
+      "description": "How many layers of iframes should we search when trying to auto-fill or auto-submit login credentials?",
+      "type": "integer",
+      "value": 5
     }
   ]
 }
