@@ -93,7 +93,7 @@ document.addEventListener('keydown', function(event) {
       // otherwise, trigger a click
       let selected = entryList.options[entryList.selectedIndex];
       if (selected && selected.item.children.length === 0) {
-        self.port.emit('enter-pressed', selected.item);
+        self.port.emit('enter-pressed', selected.item, event.shiftKey);
         // console.debug("emitted enter-pressed");
       } else if (selected) {
         selected.click();
