@@ -10,32 +10,32 @@
   "preferences-branch": "passff",
   "preferences": [
     {
-      "name": "storeDir",
-      "title": "Path of the password store directory",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "gpgAgentEnv",
-      "title": "Location of the .gpg-agent-info file",
-      "type": "string",
-      "value": ""
-    },
-    {
       "name": "callType",
       "title": "Method by which pass is called",
-      "type": "string",
-      "value": "direct"
+      "type": "menulist",
+      "value": "direct",
+      "options": [
+        {
+          "value": "direct",
+          "label": "Direct execution (faster)"
+        },
+        {
+          "value": "shell",
+          "label": "Through shell (more configurable)"
+        }
+      ]
     },
     {
       "name": "shell",
       "title": "Shell used to call pass",
+      "description": "Only used for 'Through shell' call method",
       "type": "string",
       "value": "/bin/bash"
     },
     {
       "name": "shellArgs",
       "title": "Arguments for the shell pass is executed in",
+      "description": "Only used for 'Through shell' call method",
       "type": "string",
       "value": "--login"
     },
@@ -53,25 +53,29 @@
     },
     {
       "name": "loginFieldNames",
-      "title": "Names for login fields",
+      "title": "Login field name(s)",
+      "description": "Name(s) in your password files for the login field. Separate with commas.",
       "type": "string",
       "value": "login,user,username,id"
     },
     {
       "name": "passwordFieldNames",
-      "title": "Names for password fields",
+      "title": "Password field name(s)",
+      "description": "Name(s) in your password files for the password field. Separate with commas. Will use first line of file if no other matching line is found.",
       "type": "string",
       "value": "passwd,password,pass"
     },
     {
       "name": "urlFieldNames",
-      "title": "Names for URL fields",
+      "title": "URL field names",
+      "description": "Name(s) in your password files for URL fields",
       "type": "string",
       "value": "url,http,www"
     },
     {
       "name": "enterBehavior",
-      "title": "What happens when you press Enter when searching for a password",
+      "title": "Enter behavior",
+      "description": "What happens when you press Enter when searching for a password",
       "type": "menulist",
       "value": 0,
       "options": [
@@ -95,6 +99,20 @@
       "description": "Key combination to open the password menu. Can be any function key ('f1', 'f2', etc) or one or more modifiers and a key ('<modifier>-<key>'). Modifiers are: 'shift', 'alt', 'meta', 'control', or 'accel' (accel is Ctrl on Linux/Windows, Cmd on OS X). Examples: 'accel-y' or 'control-alt-shift-p'",
       "type": "string",
       "value": "accel-y"
+    },
+    {
+      "name": "storeDir",
+      "title": "Path to password-store directory",
+      "description": "Leave blank for pass's default",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "gpgAgentEnv",
+      "title": "Location of the .gpg-agent-info file",
+      "description": "Leave blank for the default",
+      "type": "string",
+      "value": ""
     }
   ]
 }
