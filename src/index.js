@@ -118,8 +118,6 @@ panel.port.on('display-all', function() {
   panel.port.emit('update-items', pass.getRootItems());
 });
 
-panel.port.emit('update-items', pass.getRootItems());
-
 // Listen for tab openings.
 // tabs.on('open', function onOpen(tab) {
 //   myOpenTabs.push(tab);
@@ -127,6 +125,11 @@ panel.port.emit('update-items', pass.getRootItems());
 
 // Listen for tab content loads.
 tabs.on('ready', function(tab) {
+  // switch the context of the menu
+  let activeURL = tabs.activeTab.url;
+  panel.port.emit('update-items', pass.getUrlMatchingItems(activeURL));
+
+  // auto-fill, if necessary
   let elm = autoFillItems.find(function(elm) { return elm.tab == tab })
   if (elm) {
     workers.getWorker(tabs.activeTab).port.emit('fill-submit', pass.getPasswordData(elm.item));
