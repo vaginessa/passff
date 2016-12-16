@@ -150,7 +150,7 @@ tabs.on('pageshow', setContextualMenuItems);
 
 // If necessary, auto-fill when a new tab is loaded
 tabs.on('ready', function(tab) {
-  let elm = autoFillItems.find(function(elm) { return elm.tab == tab })
+  let elm = autoFillItems.find(function(elm) { return elm.tab == tab });
   if (elm) {
     workers.getWorker(tabs.activeTab).port.emit('fill-submit', pass.getPasswordData(elm.item));
     for (let i = 0; i < autoFillItems.length; i++) {
@@ -158,6 +158,12 @@ tabs.on('ready', function(tab) {
         autoFillItems.splice(i, 1);
         break;
       }
+    }
+  } else if (prefs.autoFill) {
+    let bestFitItem = pass.getUrlMatchingItems(tab.url)[0];
+    if (bestFitItem) {
+      let signal = prefs.autoSubmit ? 'fill-submit' : 'fill';
+      workers.getWorker(tab).port.emit(signal, pass.getPasswordData(bestFitItem));
     }
   }
 });

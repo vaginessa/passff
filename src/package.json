@@ -101,6 +101,19 @@
       "value": "accel-y"
     },
     {
+      "name": "autoFill",
+      "title": "Try to fill credentials automatically?",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "autoSubmit",
+      "title": "Try to submit credentials automatically?",
+      "description": "Only used if automatically filling credentials",
+      "type": "bool",
+      "value": false
+    },
+    {
       "name": "storeDir",
       "title": "Path to password-store directory",
       "description": "Leave blank for pass's default",

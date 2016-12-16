@@ -270,34 +270,6 @@ function getItemQuality(item, urlStr) {
   return noMatch;
 }
 
-function findBestFitItem(items, urlStr) {
-  let url = new URL(urlStr);
-
-  if (items.length === 0) {
-    return null;
-  }
-
-  let bestItem = items[0];
-  let bestQuality = -1;
-
-  items.forEach(function(curItem) {
-    if (curItem.isLeaf()) {
-      return;
-    }
-
-    let curQuality = getItemQuality(curItem, urlStr);
-
-    if (curQuality.quality > bestQuality && curItem.key.length > bestItem.key.length) {
-      bestItem = curItem;
-      bestQuality = curQuality.quality;
-    }
-  });
-
-  console.debug('Best fit item', bestItem);
-
-  return bestItem;
-}
-
 function getItemsLeafs(items) {
   let leafs = [];
   items.forEach(function(item) {
