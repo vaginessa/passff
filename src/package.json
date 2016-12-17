@@ -3,7 +3,7 @@
   "title": "PassFF",
   "id": "jid1-gQi129pLYB9e6g@jetpack",
   "description": "Password-Store integration for Firefox",
-  "author": "Johan Venant, Tobias Umbach, et al",
+  "author": "Johan Venant, Tobias Umbach, Nathan Wallace, et al",
   "license": "GPL 2.0",
   "version": "1.0.0",
 
@@ -60,24 +60,38 @@
     },
     {
       "name": "loginFieldNames",
-      "title": "Login field name(s)",
-      "description": "Name(s) in your password files for the login field. Separate with commas.",
+      "title": "Login value names",
+      "description": "Names in your password files of your login. Separate with commas.",
       "type": "string",
       "value": "login,user,username,id"
     },
     {
       "name": "passwordFieldNames",
-      "title": "Password field name(s)",
-      "description": "Name(s) in your password files for the password field. Separate with commas. Will use first line of file if no other matching line is found.",
+      "title": "Password value names",
+      "description": "Names in your password files for the password field. Separate with commas. Will use first line of file if no other matching line is found.",
       "type": "string",
       "value": "passwd,password,pass"
     },
     {
       "name": "urlFieldNames",
-      "title": "URL field names",
-      "description": "Name(s) in your password files for URL fields",
+      "title": "URL value names",
+      "description": "Names in your password files for URL fields",
       "type": "string",
       "value": "url,http,www"
+    },
+    {
+      "name": "loginInputNames",
+      "title": "Login input field names",
+      "description": "Names of input fields on the page to fill in with your login. Matches if a given name is part of the input's name. Separate with commas.",
+      "type": "string",
+      "value": "log,user,usr,mail,name,id"
+    },
+    {
+      "name": "passwordInputNames",
+      "title": "Password input field names",
+      "description": "Names of input fields on the page to fill in with your password. Matches if a given name is part of the input's name. Separate with commas.",
+      "type": "string",
+      "value": "pass"
     },
     {
       "name": "enterBehavior",
