@@ -6,7 +6,6 @@
 let entryList = document.getElementById('entry-list');
 let searchBox = document.getElementById('search-box');
 let refreshButton = document.getElementById('refresh-button');
-let preferencesButton = document.getElementById('preferences-button');
 let displayContextualButton = document.getElementById('display-contextual');
 let displayAllButton = document.getElementById('display-all');
 let itemStack = [];

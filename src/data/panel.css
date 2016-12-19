@@ -17,10 +17,6 @@ form {
   margin-bottom: 8px;
 }
 
-#viewmode-panel {
-  margin-bottom: 4px;
-}
-
 #entry-list {
   display: block;
   flex: 1 1 auto;

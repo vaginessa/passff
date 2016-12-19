@@ -15,7 +15,8 @@ let pass = require('lib/pass');
 
 let panel = require('sdk/panel').Panel({
   contentURL: self.data.url('panel.html'),
-  contentScriptFile: self.data.url('panel.js')
+  contentScriptFile: self.data.url('panel.js'),
+  width: 380
 });
 let autoFillItems = new Array();
 
