@@ -8,6 +8,8 @@ let searchBox = document.getElementById('search-box');
 let refreshButton = document.getElementById('refresh-button');
 let displayContextualButton = document.getElementById('display-contextual');
 let displayAllButton = document.getElementById('display-all');
+let errorsContainer = document.getElementById('errors-container');
+let errorsList = document.getElementById('errors-list');
 let itemStack = [];
 
 self.port.on('menu-opened', function (items) {
@@ -20,6 +22,29 @@ self.port.on('update-items', function (items) {
     { children: items } // fake root item
   ];
   updateView();
+});
+
+self.port.on('set-errors', function(errorMsgs) {
+  while (errorsList.hasChildNodes()) {
+    errorsList.removeChild(errorsList.firstChild);
+  }
+  if (errorMsgs.length > 0) {
+    errorsContainer.style.display = 'block';
+    errorMsgs.forEach(function(errorMsg) {
+      let error = document.createElement('li');
+      let dismissLink = document.createElement('a');
+      dismissLink.innerHTML = ' &times;';
+      dismissLink.setAttribute('href', '#');
+      dismissLink.addEventListener('click', function(e) {
+        self.port.emit('remove-error', errorMsg);
+      });
+      error.innerHTML = errorMsg;
+      error.appendChild(dismissLink);
+      errorsList.appendChild(error);
+    });
+  } else {
+    errorsContainer.style.display = 'none';
+  }
 });
 
 function updateView() {

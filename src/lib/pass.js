@@ -6,6 +6,9 @@ let {subprocess} = require('./subprocess.jsm');
 let {prefs} = require('sdk/simple-prefs');
 let {URL} = require('sdk/url');
 
+// Global for error handler
+var errorCallback;
+
 let Item = function (depth, key, parentFullKey) {
   this.children = [];
   this.depth = depth;
@@ -38,8 +41,6 @@ subprocess.registerDebugHandler(function (m) {
 subprocess.registerLogHandler(function (m) {
   console.error('[subprocess] ' + m);
 });
-
-reloadItems();
 
 function reloadItems() {
   console.log("reloadItems");
@@ -100,6 +101,7 @@ function getPasswordData(item) {
 
     if (executionResult.exitCode !== 0) {
       console.error('Pass execution failed:', executionResult);
+      errorCallback("[" + executionResult.exitCode + "] " + executionResult.stderr + " ; " + executionResult.stdout);
       return;
     }
 
@@ -353,13 +355,13 @@ function executePass(args) {
     p.wait();
     if (result.exitCode !== 0) {
       console.log('pass execution failed', result.exitCode, result.stderr, result.stdout);
+      errorCallback("[" + result.exitCode + "] " + result.stderr + " " + result.stdout);
     } else {
       console.log('pass script execution ok');
     }
   } catch (ex) {
-    // TODO show error message on execution failure
-    // PassFF.Pass._promptService.alert(null, 'Error executing pass script', ex.message);
     console.error('Error executing pass script', ex);
+    errorCallback(ex.toString());
     result = { exitCode: -1 };
   }
   return result;
@@ -389,3 +391,6 @@ exports.getRootItems = function() {
 exports.getMatchingItems = getMatchingItems;
 exports.getUrlMatchingItems = getUrlMatchingItems;
 exports.reloadItems = reloadItems;
+exports.onError = function(callback) {
+  errorCallback = callback;
+};

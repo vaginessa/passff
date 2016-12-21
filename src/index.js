@@ -12,6 +12,11 @@ let { Hotkey } = require('sdk/hotkeys');
 
 let workers = require('lib/workers');
 let pass = require('lib/pass');
+let _ = require('lib/utilities');
+
+// Globals
+var errors = new Set();
+var hotkey;
 
 let panel = require('sdk/panel').Panel({
   contentURL: self.data.url('panel.html'),
@@ -49,38 +54,65 @@ button = buttons.ActionButton({
   },
   onClick: showPanel
 });
-// Set the global hotkey
-var hotkey;
-try {
-  hotkey = Hotkey({combo: prefs.hotkey, onPress: showPanel});
-} catch (e) {
-  console.error("Invalid hotkey:", prefs.hotkey, e);
+
+function removeError(errorMsg) {
+  errors.delete(errorMsg);
+  panel.port.emit('set-errors', Array.from(errors));
 }
-// Update hotkey if user changes it
-simplePrefs.on('hotkey', function() {
+function addError(errorMsg) {
+  console.log("Adding error:", errorMsg);
+  errors.add(errorMsg);
+  panel.port.emit('set-errors', Array.from(errors));
+}
+
+panel.port.on('add-error', addError);
+panel.port.on('remove-error', removeError);
+
+// Set the global hotkey
+function setHotkey() {
   hotkey && hotkey.destroy && hotkey.destroy(); // destroy old hotkey
-  try {
-    hotkey = Hotkey({combo: prefs.hotkey, onPress: showPanel});
-  } catch (e) {
-    console.debug("Invalid hotkey:", prefs.hotkey, e);
+  let keycombo = prefs.hotkey;
+  if (keycombo && keycombo.trim().length > 0) {
+    try {
+      // set global hotkey
+      hotkey = Hotkey({combo: prefs.hotkey, onPress: showPanel});
+      removeError("Hotkey is invalid");
+    } catch (e) {
+      console.error("Invalid hotkey:", keycombo, e);
+      addError("Hotkey is invalid");
+    }
   }
-});
+}
+setHotkey();
+simplePrefs.on('hotkey', setHotkey);
 
 
+// Functions to control items shown in menu
 let setContextualMenuItems = function() {
   let activeURL = tabs.activeTab.url;
   panel.port.emit('update-items', pass.getUrlMatchingItems(activeURL));
 };
+let setSearchMenuItems = function(searchTerm) {
+  let searchResults = pass.getMatchingItems(searchTerm, 20);
+  panel.port.emit('update-items', searchResults);
+};
+let refreshItems = function(searchTerm) {
+  pass.reloadItems();
+  if (/\S/.test(searchTerm)) {
+    setSearchMenuItems();
+  } else {
+    setContextualMenuItems();
+  }
+};
 
-panel.port.on('fill', function (item) {
+// Functions to perform actions on the page
+let fillInPassword = function (fillEvent, item) {
   panel.hide();
-  workers.getWorker(tabs.activeTab).port.emit('fill', pass.getPasswordData(item));
-});
+  workers.getWorker(tabs.activeTab).port.emit(fillEvent, pass.getPasswordData(item));
+};
 
-panel.port.on('fill-submit', function (item) {
-  panel.hide();
-  workers.getWorker(tabs.activeTab).port.emit('fill-submit', pass.getPasswordData(item));
-});
+panel.port.on('fill', _.partial(fillInPassword, 'fill'));
+panel.port.on('fill-submit', _.partial(fillInPassword, 'fill-submit'));
 
 panel.port.on('goto', function (item) {
   panel.hide();
@@ -111,7 +143,6 @@ panel.port.on('enter-pressed', function (item, useNewTab) {
   let passwordData = pass.getPasswordData(item)
   switch (prefs.enterBehavior) {
     case 0: // goto, fill, submit
-      // DUP: 'goto-fill-submit' handler above
       autoFillItems.push({'tab': tabs.activeTab, 'item': item})
       let url = pass.getPasswordData(item).url;
       if (useNewTab) {
@@ -128,18 +159,8 @@ panel.port.on('enter-pressed', function (item, useNewTab) {
       break;
   }
 });
-panel.port.on('search', function (searchTerm) {
-  let searchResults = pass.getMatchingItems(searchTerm, 20);
-  panel.port.emit('update-items', searchResults);
-});
-panel.port.on('refresh-items', function(searchTerm) {
-  pass.reloadItems();
-  let items = pass.getRootItems();
-  if (/\S/.test(searchTerm)) {
-    items = pass.getMatchingItems(searchTerm, 20);
-  }
-  panel.port.emit('update-items', items);
-});
+panel.port.on('search', setSearchMenuItems);
+panel.port.on('refresh-items', refreshItems);
 panel.port.on('display-contextual', setContextualMenuItems);
 panel.port.on('display-all', function() {
   panel.port.emit('update-items', pass.getRootItems());
@@ -168,6 +189,10 @@ tabs.on('ready', function(tab) {
     }
   }
 });
+
+// Initialize the items
+pass.onError(addError);
+pass.reloadItems();
 
 exports.main = function(options) {
   if (options.loadReason === 'install') {

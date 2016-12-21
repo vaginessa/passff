@@ -117,7 +117,7 @@
     {
       "name": "hotkey",
       "title": "Keyboard shortcut",
-      "description": "Key combination to open the password menu. Can be any function key ('f1', 'f2', etc) or one or more modifiers and a key ('<modifier>-<key>'). Modifiers are: 'shift', 'alt', 'meta', 'control', or 'accel' (accel is Ctrl on Linux/Windows, Cmd on OS X). Examples: 'accel-y' or 'control-alt-shift-p'",
+      "description": "Key combination to open the password menu. Can be any function key ('f1', 'f2', etc) or one or more modifiers and a key ('<modifier>-<key>'). Modifiers are: 'shift', 'alt', 'meta', 'control', or 'accel' (accel is Ctrl on Linux/Windows, Cmd on OS X). Leave blank to disable. Examples: 'accel-y' or 'control-alt-shift-p'",
       "type": "string",
       "value": "accel-y"
     },

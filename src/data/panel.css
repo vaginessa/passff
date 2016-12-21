@@ -20,7 +20,23 @@ form {
 #entry-list {
   display: block;
   flex: 1 1 auto;
-  width: 100%;
   margin-bottom: 8px;
+  min-height: 100px;
+  width: 100%;
 }
 
+#errors-container {
+  color: #8b0000;
+  margin-top: 5px;
+}
+#errors-list {
+  margin: 5px 0;
+}
+#errors-list a {
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 20px;
+}
+#errors-list a:hover {
+  text-decoration: underline;
+}
