@@ -1,0 +1,41 @@
+{
+  "manifest_version": 2,
+  "name": "PassFF",
+  "version": "1.0.0",
+  "description": "Integrates your zx2c4 password store into Firefox",
+
+  "developer": {
+    "name": "Johan Venant et al.",
+    "url": "http://invicem.pro/pages/passff.html"
+  },
+
+  "icons": {
+    "128": "icon.png"
+  },
+
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+
+  "permissions": [
+    "storage",
+    "nativeMessaging"
+  ],
+
+  "background": {
+    "scripts": [
+      "modules/passff.js",
+      "modules/utils.js",
+      "modules/preferences.js",
+      "modules/password_store.js",
+      "main.js"
+    ]
+  },
+
+  "applications": {
+    "gecko": {
+      "id": "passff@invicem.pro",
+      "strict_min_version": "50.0"
+    }
+  }
+}
