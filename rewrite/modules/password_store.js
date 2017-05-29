@@ -12,54 +12,61 @@ PassFF.PasswordStore = (function() {
     };
   };
 
-  let hostCall = function() {
-    let result = null;
-    let command = null;
+  let sendNativeMessage = function(...args) {
+    let params, result, overrides = {};
+    if (typeof args[args.length - 1] === 'object') {
+      overrides = args.pop();
+    }
 
-    command = PassFF.Preferences.get('command');
+    if (PassFF.Preferences.get('callType') === 'direct') {
+      params = {
+        command: PassFF.Preferences.get('command'),
+        arguments: args,
+        environment: environment,
+        charset: 'UTF-8',
+        mergeStderr: false
+      };
+    } else { // through shell
+      params = {
+        command: PassFF.Preferences.get('shell'),
+        arguments: [
+          ...PassFF.Preferences.get('shellArgs'),
+          PassFF.Preferences.get('command'),
+          ...PassFF.Preferences.get('commandArgs'),
+          ...args,
+        ],
+      };
+    }
 
-    let params = {
-      command: command,
-      arguments: Array.prototype.slice.call(arguments),
-      environment: environment,
-      charset: 'UTF-8',
-      mergeStderr: false
-    };
+    Object.assign(params, overrides);
 
-    log.debug('Execute pass', params);
+    log.debug("Sending native message:", params);
     return browser.runtime.sendNativeMessage('passff', params)
       .then((result) => {
-        if (result.exitCode === 0) {
-          log.info('pass script execution ok');
-        } else {
-          log.warn('pass execution failed', result.exitCode, result.stderr, result.stdout);
+        if (result.exitCode !== 0) {
+          log.warn("Native message failed:", result.exitCode, result.stderr, result.stdout);
         }
         return result;
       }, (ex) => {
-        log.error('Error executing pass script', ex);
-        return { exitCode: -1 };
+        log.error("Error sending native message:", ex);
+        return {exitCode: -1};
       });
   };
 
   let cleanAndAnnotateLines = function(passListOutput) {
-    let cleanLines = [],
+    let cleanLines  = [],
         outputLines = passListOutput.stdout.replace(/&middot;|`/g, '|').split('\n'),
-        depthRegex = /(\|-- |\|   |    )/g,
+        depthRegex  = /(\|-- |\|   |    )/g,
         nameRegex   = /\|\-\- (.*)/;
     PassFF.Utils.each(outputLines, function(line, i) {
       if (nameRegex.test(line)) {
-        log.debug("Matched name regex:", line);
         let name = nameRegex.exec(line)[1];
         if (cleanLines.length > 0) {
           let lastLine = cleanLines[cleanLines.length -1],
-              depth    = line.match(depthRegex).length,
-              type     = 'leaf';
-          if (depth > lastLine.depth) {
-            lastLine.type = 'inode';
-          }
-          cleanLines.push({type: type,   name: name, depth: depth});
+              depth    = line.match(depthRegex).length;
+          cleanLines.push({name: name, depth: depth});
         } else {
-          cleanLines.push({type: 'leaf', name: name, depth: 1});
+          cleanLines.push({name: name, depth: 1});
         }
       }
     });
@@ -67,15 +74,15 @@ PassFF.PasswordStore = (function() {
   };
 
   let loadPasswords = function() {
-    browser.runtime.sendNativeMessage("passff", { command: "env" })
+    browser.runtime.sendNativeMessage('passff', {command: 'env'})
       .then((result) => {
-        environment = {
-          // 'HOME': PassFF.Preferences.get('home'),
+        environment = PassFF.Utils.reject({
+          'HOME': PassFF.Preferences.get('home'),
           'DISPLAY': (result.DISPLAY ? result.DISPLAY : ':0.0'),
           'TREE_CHARSET': 'ISO-8859-1',
           'GNUPGHOME': PassFF.Preferences.get('gnupgHome'),
-        };
-        hostCall().then((passListOutput) => {
+        }, PassFF.Utils.isBlank);
+        sendNativeMessage().then((passListOutput) => {
           let annotatedLines = cleanAndAnnotateLines(passListOutput),
               rootNode       = TreeNode(null, 0, null),
               currentParent  = rootNode,
@@ -94,11 +101,10 @@ PassFF.PasswordStore = (function() {
 
             let thisNode = TreeNode(thisLine.name, thisLine.depth, currentParent);
             currentParent.children.push(thisNode);
-
             previousNode = thisNode;
           }
 
-          log.debug("Root node:", rootNode);
+          log.debug("Password store:", rootNode);
           return rootNode;
       });
     });
