@@ -1,15 +1,34 @@
 'use strict';
 
 PassFF.PasswordStore = (function() {
-  var environment = {};
+  var environment = {},
+      passwordsTree;
 
   let TreeNode = function(value, depth, parent) {
-    return {
-      value: value,
-      depth: depth,
-      parent: parent,
-      children: [],
-    };
+    this.value = value;
+    this.depth = depth;
+    this.parent = parent;
+    this.children = [];
+  };
+
+  TreeNode.prototype.fullName = function() {
+    let parts = [this.value],
+        currentAncestor = this.parent;
+    while (currentAncestor) {
+      parts.unshift(currentAncestor.value);
+      currentAncestor = currentAncestor.parent;
+    }
+    return parts.join("/");
+  };
+
+  let traverseTree = function(node, func) {
+    // don't yield the node for the root node or any internal nodes
+    if (node.parent !== null && node.children.length === 0) {
+      func(node);
+    }
+    node.children.forEach(function(childNode) {
+      traverseTree(childNode, func);
+    });
   };
 
   let sendNativeMessage = function(...args) {
@@ -74,7 +93,7 @@ PassFF.PasswordStore = (function() {
   };
 
   let loadPasswords = function() {
-    browser.runtime.sendNativeMessage('passff', {command: 'env'})
+    return browser.runtime.sendNativeMessage('passff', {command: 'env'})
       .then((result) => {
         environment = PassFF.Utils.reject({
           'HOME': PassFF.Preferences.get('home'),
@@ -84,7 +103,7 @@ PassFF.PasswordStore = (function() {
         }, PassFF.Utils.isBlank);
         sendNativeMessage().then((passListOutput) => {
           let annotatedLines = cleanAndAnnotateLines(passListOutput),
-              rootNode       = TreeNode(null, 0, null),
+              rootNode       = new TreeNode(null, 0, null),
               currentParent  = rootNode,
               previousNode   = null;
 
@@ -99,18 +118,41 @@ PassFF.PasswordStore = (function() {
               }
             }
 
-            let thisNode = TreeNode(thisLine.name, thisLine.depth, currentParent);
+            let thisNode = new TreeNode(thisLine.name, thisLine.depth, currentParent);
             currentParent.children.push(thisNode);
             previousNode = thisNode;
           }
 
           log.debug("Password store:", rootNode);
-          return rootNode;
+          passwordsTree = rootNode;
+          return passwordsTree;
       });
     });
   };
 
   return {
     load: loadPasswords,
+
+    entriesMatchingHostname: function(hostname) {
+      let matches = [];
+      traverseTree(passwordsTree, function(password) {
+        let fullName = password.fullName(),
+            hostnameParts = hostname.split(/\.(co\.\w\w)?/).filter(Boolean);
+        for (let i=0; i < hostnameParts.length - 1; i++) {
+          let hostname = hostnameParts.slice(i).join('.'),
+              score    = fuzzaldrin.score(fullName, hostname) * (hostnameParts.length - 1 - i);
+          if (score > 0) {
+            matches.push({name: fullName, score: score});
+            break;
+          }
+        }
+      });
+      matches.sort(function(a, b) {
+        // sort by score descending (subtraction here is to cause sort to work with numbers)
+        return b.score - a.score;
+      });
+      log.debug("Entries matching URL:", matches);
+      return PassFF.Utils.map(matches, PassFF.Utils.property('name'));
+    },
   };
 })();

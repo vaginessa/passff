@@ -18,12 +18,14 @@
   },
 
   "permissions": [
+    "tabs",
     "storage",
     "nativeMessaging"
   ],
 
   "background": {
     "scripts": [
+      "modules/fuzzaldrin.js",
       "modules/passff.js",
       "modules/utils.js",
       "modules/preferences.js",

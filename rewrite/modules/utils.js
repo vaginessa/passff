@@ -28,16 +28,42 @@ PassFF.Utils = (function() {
         (typeof value === 'string' && /^\s*$/.test(value));
     },
 
+    isEmpty: function(collection) {
+      return Object.keys(collection).length === 0;
+    },
+
     complement: function(func) {
       return function(/* arguments */) {
         return !func(...arguments);
       };
     },
 
+    property: function(propertyName) {
+      return function(obj) {
+        return obj[propertyName];
+      };
+    },
+
     each: each,
 
+    map: function(collection, func) {
+      let result;
+      if (isArrayLike(collection)) {
+        result = [];
+        _.each(collection, function(item, i) {
+          result.push(func(item, i));
+        });
+      } else {
+        result = {};
+        _.each(collection, function(val, key) {
+          result[key] = func(val, key);
+        });
+      }
+      return result;
+    },
+
     select: function(collection, func) {
-      var result;
+      let result;
       if (isArrayLike(collection)) {
         result = [];
         _.each(collection, function(item, i) {

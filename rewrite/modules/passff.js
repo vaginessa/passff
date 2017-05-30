@@ -1,35 +1,50 @@
 'use strict';
 
-var log = {
-  generateArguments: function(args) {
-    var argsArray = Array.slice(args);
-    argsArray.unshift('[PassFF]');
-    return argsArray;
-  }
-};
+var log;
 
 (function() {
-  function logPrototype() {
-    if (PassFF.Preferences) {
-      // jshint validthis: true
-      this.apply(console, log.generateArguments(arguments));
-    }
+  let logPrototype = function() {
+    this.call(console, '[PassFF]', ...arguments);
   }
-  log.debug = logPrototype.bind(console.debug);
-  log.info  = logPrototype.bind(console.info);
-  log.warn  = logPrototype.bind(console.warn);
-  log.error = logPrototype.bind(console.error);
+  log = {
+    debug: logPrototype.bind(console.debug),
+    info:  logPrototype.bind(console.info),
+    warn:  logPrototype.bind(console.warn),
+    error: logPrototype.bind(console.error),
+  };
 })();
 
 var PassFF = (function() {
-  let init = function() {
-    log.debug("PassFF.init");
-    PassFF.Preferences.load();
-    PassFF.PasswordStore.load();
-    // hook browser events (page ready, tab change, etc)
+  let getActiveTab = function() {
+    return browser.tabs.query({active: true, currentWindow: true})
+             .then((tabs) => { return tabs[0]; });
+  }
+
+  let handleTabUpdate = function() {
+    getActiveTab().then((tab) => {
+      if (!tab || !tab.url) return;
+
+      log.debug("Location changed:", tab.url);
+      if (PassFF.Preferences.get('autoFill')) {
+        let matches = PassFF.PasswordStore.entriesMatchingURL(new URL(tab.url).hostname);
+        if (matches.length > 0) {
+          // TODO: try to auto-fill with the first match
+        }
+      }
+    });
+  };
+
+  let hookBrowserEvents = function() {
+    browser.tabs.onUpdated.addListener(handleTabUpdate);
+    browser.tabs.onActivated.addListener(handleTabUpdate);
   };
 
   return {
-    init: init,
+    init: function() {
+      log.debug("PassFF.init");
+      PassFF.Preferences.load();
+      PassFF.PasswordStore.load().then(handleTabUpdate);
+      hookBrowserEvents();
+    },
   };
 })();
