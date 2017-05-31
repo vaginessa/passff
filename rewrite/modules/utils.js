@@ -81,6 +81,23 @@ PassFF.Utils = (function() {
     reject: function(collection, func) {
       return _.select(collection, _.complement(func));
     },
+
+    findMapped: function(collection, func) {
+      var i, length, result;
+      if (isArrayLike(collection)) {
+        for (i=0, length=collection.length; i < length; i++) {
+          result = func(collection[i], i, collection);
+          if (result) return result;
+        }
+      } else {
+        let keys = Object.keys(collection);
+        for (i=0, length=keys.length; i < length; i++) {
+          result = func(collection[keys[i]], keys[i]);
+          if (result) return result;
+        }
+      }
+      return result;
+    },
   };
 
   return _;

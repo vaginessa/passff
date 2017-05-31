@@ -130,6 +130,20 @@ PassFF.PasswordStore = (function() {
     });
   };
 
+  let coerceDataKey = function(rawKey) {
+    let coercedKey = PassFF.Utils.findMapped({
+      passwordFieldNames: 'password',
+      loginFieldNames:    'username',
+      urlFieldNames:      'url',
+    }, function(keyName, preferenceName) {
+      let fieldNames = PassFF.Preferences.get(preferenceName).split(',');
+      if (fieldNames.some((fieldName) => fieldName.trim() === rawKey)) {
+        return keyName;
+      }
+    });
+    return coercedKey || rawKey;
+  };
+
   let parsePasswordData = function(passShowOutput) {
     let lines               = passShowOutput.stdout.split('\n'),
         additionalInfoRegex = /^(\S.*?):\s*(\S.*)$/,
@@ -137,7 +151,8 @@ PassFF.PasswordStore = (function() {
     PassFF.Utils.each(lines.slice(1), (line) => {
       let match = additionalInfoRegex.exec(line);
       if (match) {
-        data[match[1].trim()] = match[2].trim();
+        let key = coerceDataKey(match[1].trim());
+        data[key] = match[2].trim();
       }
     });
     return data;

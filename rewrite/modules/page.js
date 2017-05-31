@@ -27,10 +27,10 @@ PassFF.Page = (function() {
     let filledOutElements = [];
     doc.querySelectorAll('input[type=text], input[type=email], input[type=password], input[type=tel]')
       .forEach((element) => {
-        if (isPasswordInput(element)) {
+        if (passwordData.password && isPasswordInput(element)) {
           element.value = passwordData.password;
           filledOutElements.push(element);
-        } else if (isUsernameInput(element)) {
+        } else if (passwordData.username && isUsernameInput(element)) {
           element.value = passwordData.username;
           filledOutElements.push(element);
         } // else if (isOtherInput(element, passwordData)) { ... }
