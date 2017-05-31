@@ -130,6 +130,19 @@ PassFF.PasswordStore = (function() {
     });
   };
 
+  let parsePasswordData = function(passShowOutput) {
+    let lines               = passShowOutput.stdout.split('\n'),
+        additionalInfoRegex = /^(\S.*?):\s*(\S.*)$/,
+        data                = {password: lines[0]};
+    PassFF.Utils.each(lines.slice(1), (line) => {
+      let match = additionalInfoRegex.exec(line);
+      if (match) {
+        data[match[1].trim()] = match[2].trim();
+      }
+    });
+    return data;
+  };
+
   return {
     load: loadPasswords,
 
@@ -153,6 +166,10 @@ PassFF.PasswordStore = (function() {
       });
       log.debug("Entries matching URL:", matches);
       return PassFF.Utils.map(matches, PassFF.Utils.property('name'));
+    },
+
+    loadPassword: function(passwordFullName) {
+      return sendNativeMessage("show", passwordFullName).then(parsePasswordData);
     },
   };
 })();

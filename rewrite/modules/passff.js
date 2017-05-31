@@ -22,13 +22,19 @@ var PassFF = (function() {
 
   let handleTabUpdate = function() {
     getActiveTab().then((tab) => {
-      if (!tab || !tab.url) return;
+      if (!tab || !tab.url || tab.status !== "complete") return;
 
       log.debug("Location changed:", tab.url);
       if (PassFF.Preferences.get('autoFill')) {
-        let matches = PassFF.PasswordStore.entriesMatchingURL(new URL(tab.url).hostname);
+        let matches = PassFF.PasswordStore.entriesMatchingHostname(new URL(tab.url).hostname);
         if (matches.length > 0) {
-          // TODO: try to auto-fill with the first match
+          PassFF.PasswordStore.loadPassword(matches[0])
+            .then((passwordData) => {
+              let shouldSubmit = PassFF.Preferences.get('autoSubmit');
+              PassFF.Page.enterLogin(passwordData, shouldSubmit, tab.id);
+            });
+        } else {
+          log.debug("No matching entries for current page");
         }
       }
     });
@@ -46,5 +52,6 @@ var PassFF = (function() {
       PassFF.PasswordStore.load().then(handleTabUpdate);
       hookBrowserEvents();
     },
+    getActiveTab: getActiveTab,
   };
 })();
