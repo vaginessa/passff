@@ -4,7 +4,7 @@ var log;
 
 (function() {
   let logPrototype = function() {
-    this.call(console, '[PassFF]', ...arguments);
+    this.call(console, "[PassFF]", ...arguments);
   }
   log = {
     debug: logPrototype.bind(console.debug),
@@ -22,19 +22,16 @@ var PassFF = (function() {
 
   let handleTabUpdate = function() {
     getActiveTab().then((tab) => {
-      if (!tab || !tab.url || tab.status !== "complete") return;
+      if (!tab || !tab.url || tab.status !== 'complete') return; // DUP 1
 
-      log.debug("Location changed:", tab.url);
       if (PassFF.Preferences.get('autoFill')) {
         let matches = PassFF.PasswordStore.entriesMatchingHostname(new URL(tab.url).hostname);
         if (matches.length > 0) {
-          PassFF.PasswordStore.loadPassword(matches[0])
+          PassFF.PasswordStore.loadPassword(matches[0].fullName)
             .then((passwordData) => {
               let shouldSubmit = PassFF.Preferences.get('autoSubmit');
               PassFF.Page.enterLogin(passwordData, shouldSubmit, tab.id);
             });
-        } else {
-          log.debug("No matching entries for current page");
         }
       }
     });
@@ -43,6 +40,7 @@ var PassFF = (function() {
   let hookBrowserEvents = function() {
     browser.tabs.onUpdated.addListener(handleTabUpdate);
     browser.tabs.onActivated.addListener(handleTabUpdate);
+    browser.runtime.onMessage.addListener(PassFF.Messenger.dispatch);
   };
 
   return {

@@ -4,21 +4,22 @@ PassFF.PasswordStore = (function() {
   var environment = {},
       passwordsTree;
 
-  let TreeNode = function(value, depth, parent) {
-    this.value = value;
-    this.depth = depth;
-    this.parent = parent;
-    this.children = [];
-  };
-
-  TreeNode.prototype.fullName = function() {
-    let parts = [this.value],
-        currentAncestor = this.parent;
+  let getFullName = function(node) {
+    let parts = [node.value],
+      currentAncestor = node.parent;
     while (currentAncestor) {
       parts.unshift(currentAncestor.value);
       currentAncestor = currentAncestor.parent;
     }
-    return parts.join("/");
+    return parts.join('/');
+  };
+
+  let TreeNode = function(value, depth, parent) {
+    this.value = value;
+    this.depth = depth;
+    this.parent = parent;
+    this.fullName = getFullName(this);
+    this.children = [];
   };
 
   let traverseTree = function(node, func) {
@@ -164,13 +165,12 @@ PassFF.PasswordStore = (function() {
     entriesMatchingHostname: function(hostname) {
       let matches = [];
       traverseTree(passwordsTree, function(password) {
-        let fullName = password.fullName(),
-            hostnameParts = hostname.split(/\.(co\.\w\w)?/).filter(Boolean);
+        let hostnameParts = hostname.split(/\.(co\.\w\w)?/).filter(Boolean);
         for (let i=0; i < hostnameParts.length - 1; i++) {
           let hostname = hostnameParts.slice(i).join('.'),
-              score    = fuzzaldrin.score(fullName, hostname) * (hostnameParts.length - 1 - i);
+              score    = fuzzaldrin.score(password.fullName, hostname) * (hostnameParts.length - 1 - i);
           if (score > 0) {
-            matches.push({name: fullName, score: score});
+            matches.push({entry: password, score: score});
             break;
           }
         }
@@ -180,7 +180,7 @@ PassFF.PasswordStore = (function() {
         return b.score - a.score;
       });
       log.debug("Entries matching URL:", matches);
-      return PassFF.Utils.map(matches, PassFF.Utils.property('name'));
+      return matches.map(PassFF.Utils.property('entry'));
     },
 
     loadPassword: function(passwordFullName) {

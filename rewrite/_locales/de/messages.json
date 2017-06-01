@@ -1,0 +1,288 @@
+{
+  "passff.passphrase.title": {
+    "message": "Passwort-Speicher gesperrt"
+  },
+  "passff.passphrase.description": {
+    "message": "Auf den Passwort-Speicher kann nicht zugegriffen werden.\nBitte entsperre zuerst deinen gpg-agent."
+  },
+  "passff.menu.copy_password": {
+    "message": "Kopiere Passwort"
+  },
+  "passff.menu.copy_login": {
+    "message": "Kopiere Login"
+  },
+  "passff.menu.fill": {
+    "message": "Ausfüllen"
+  },
+  "passff.menu.fill_and_submit": {
+    "message": "Ausfüllen und absenden"
+  },
+  "passff.menu.goto_fill": {
+    "message": "Ansurfen, ausfüllen"
+  },
+  "passff.menu.goto_fill_and_submit": {
+    "message": "Ansurfen, ausfüllen und absenden"
+  },
+  "passff.menu.goto": {
+    "message": "Ansurfen"
+  },
+  "passff.menu.display": {
+    "message": "Anzeigen"
+  },
+  "passff.display.title": {
+    "message": "Login/Passwort"
+  },
+  "passff.display.description": {
+    "message": "Login: $LOGIN$\n Passwort: $PASSWORD$",
+    "placeholders": {
+        "login": { "content": "$1" },
+        "password": { "content": "$2" }
+    }
+  },
+  "passff.toolbar.button.label": {
+    "message": "PassFF"
+  },
+  "passff.toolbar.search.placeholder": {
+    "message": "Suche"
+  },
+  "passff.toolbar.refresh.label": {
+    "message": "Neu laden"
+  },
+  "passff.toolbar.preferences.label": {
+    "message": "Optionen"
+  },
+  "passff.toolbar.new_password.label": {
+    "message": "Neu"
+  },
+  "passff.button.root.label": {
+    "message": "Wurzel anzeigen"
+  },
+  "passff.button.context.label": {
+    "message": "Kontext anzeigen"
+  },
+  "passff.prefs.tab.general": {
+    "message": "Allgemein"
+  },
+  "passff.prefs.tab.autofilling": {
+    "message": "autom. Ausfüllen"
+  },
+  "passff.prefs.tab.fields": {
+    "message": "Felder"
+  },
+  "passff.prefs.tab.script": {
+    "message": "Pass Skript"
+  },
+  "passff.prefs.tab.adding": {
+    "message": "Passwörter hinzufügen"
+  },
+  "passff.prefs.case-insensitive-search": {
+    "message": "Groß-Kleinschreibung ignorieren"
+  },
+  "passff.prefs.case-insensitive-search-tooltip": {
+    "message": "Mit dieser Einstellung wird bei der Suche nach einer zur Website passenden Datei keine Unterscheidung zwischen Groß- und Kleinschreibung gemacht"
+  },
+  "passff.prefs.enter-behavior": {
+    "message": "Verhalten der Enter-Taste"
+  },
+  "passff.prefs.enter-behavior-tooltip": {
+    "message": "Diese Einstellung bestimmt das Standardverhalten, wenn bei einem markierten Eintrag die Enter-Taste gedrückt wird"
+  },
+  "passff.prefs.fields_description": {
+    "message": "Felder werden genutzt, um Daten in deinem Passwort-Repository zu finden. PassFF versucht, den 'login', 'passwort' oder 'url' Wert (entsprechend der Standard-Syntax) oder einen passenden Datensatznamen in den Passwortdaten zu finden."
+  },
+  "passff.prefs.password_input_names_label": {
+    "message": "Namen für 'Passwort'-Eingabefelder"
+  },
+  "passff.prefs.password_input_names_tooltip": {
+    "message": "Kommagetrennte Liste von Eingabefeld-Namen. Eingabefelder in der HTML-Seite, die einem dieser Namen entsprechen, werden mit dem Passwort gefüllt."
+  },
+  "passff.prefs.login_input_names_label": {
+    "message": "Namen für 'Login'-Eingabefelder"
+  },
+  "passff.prefs.login_input_names_tooltip": {
+    "message": "Kommagetrennte Liste von Eingabefeld-Namen. Eingabefelder in der HTML-Seite, die einem dieser Namen entsprechen, werden mit dem Login gefüllt."
+  },
+  "passff.prefs.login_field_names_label": {
+    "message": "Login Datensatznamen"
+  },
+  "passff.prefs.login_field_names_tooltip": {
+    "message": "Kommaseparierte Liste von Datensatznamen. Der erste übereinstimmende Wert in den Passwortdaten wird als 'login' verwendet."
+  },
+  "passff.prefs.password_field_names_label": {
+    "message": "Passwort Datensatznamen"
+  },
+  "passff.prefs.password_field_names_tooltip": {
+    "message": "Kommaseparierte Liste von Datensatznamen. Der erste übereinstimmende Wert in den Passwortdaten wird als 'Passwort' verwendet"
+  },
+  "passff.prefs.url_field_names_label": {
+    "message": "URL  Datensatznamen"
+  },
+  "passff.prefs.url_field_names_tooltip": {
+    "message": "Kommaseparierte Liste von Datensatznamen. Der erste übereinstimmende Wert in den Passwortdaten wird als 'URL' verwendet"
+  },
+  "passff.prefs.command_label": {
+    "message": "Pass Kommando"
+  },
+  "passff.prefs.command_tooltip": {
+    "message": "Der Pfad zum 'pass' Skript"
+  },
+  "passff.prefs.commandArgs_label": {
+    "message": "Argumente"
+  },
+  "passff.prefs.commandArgs_tooltip": {
+    "message": "Argumente, die dem 'pass' Skript bei der Ausführung übergeben werden."
+  },
+  "passff.prefs.shell_label": {
+    "message": "Pass Shell"
+  },
+  "passff.prefs.shell_tooltip": {
+    "message": "Die Shell, innerhalb der 'pass' ausgeführt werden soll."
+  },
+  "passff.prefs.shellArgs_label": {
+    "message": "Shell Argumente"
+  },
+  "passff.prefs.shellArgs_tooltip": {
+    "message": "Argumente, mit denen die Shell aufgerufen werden soll."
+  },
+  "passff.prefs.home_label": {
+    "message": "Benutzerverzeichnis"
+  },
+  "passff.prefs.home_tooltip": {
+    "message": "Heimverzeichnis des Benutzers. Leer lassen für Nutzung der Umgebungsvariablen."
+  },
+  "passff.prefs.gpg_agent_info_label": {
+    "message": "GPG-Agent-Info-Datei"
+  },
+  "passff.prefs.gpg_agent_info_tooltip": {
+    "message": "Speicherort der GPG_AGENT_INFO-Datei (Relativ zum Benutzerverzeichnis oder absolut). Wenn nicht gefunden wird versucht die Firefox-Umgebungsvariablen auszulesen."
+  },
+  "passff.prefs.pass_dir_label": {
+    "message": "Passwordstore-Ordner"
+  },
+  "passff.prefs.pass_dir_tooltip": {
+    "message": "Passwordstore-Ordner (PASSWORD_STORE_DIR). Wenn leer wird die Umgebungsvariable PASSWORD_STORE_DIR genutzt."
+  },
+  "passff.prefs.pass_git_label": {
+    "message": "Passwordstore Git-Ordner"
+  },
+  "passff.prefs.pass_git_tooltip": {
+    "message": "Passwordstore Git-Ordner (PASSWORD_STORE_GIT). Wenn leer wird die Umgebungsvariable PASSWORD_STORE_GIT genutzt."
+  },
+  "passff.prefs.auto_fill_label": {
+    "message": "Versuche, Loginseiten automatisch auszufüllen."
+  },
+  "passff.prefs.auto_fill_tooltip": {
+    "message": "Wenn gesetzt wird automatisch versucht, Loginformulare auszufüllen indem ein Passwort entsprechend der Seiten-URL ausgewählt wird."
+  },
+  "passff.prefs.auto_submit_label": {
+    "message": "Versuche, Loginseiten automatisch abzusenden."
+  },
+  "passff.prefs.auto_submit_tooltip": {
+    "message": "Wenn gesetzt wird automatisch versucht, Loginformulare abzusenden indem ein Passwort entsprechend der Seiten-URL ausgewählt wird."
+  },
+  "passff.prefs.shortcut_key_label": {
+    "message": "Schnelltaste"
+  },
+  "passff.prefs.shortcut_key_tooltip": {
+    "message": "Die Schnelltaste, um das PassFF-Fenster zu öffnen."
+  },
+  "passff.prefs.shortcut_mod_label": {
+    "message": "Schnelltasten-Modifikatoren"
+  },
+  "passff.prefs.shortcut_mod_tooltip": {
+    "message": "Die Modifikatoren-Tasten um das PassFF-Fenster zu öffnen. Eine Kombination aus den Worten 'control', 'alt' und 'shift', getrennt durch ein Komma."
+  },
+  "passff.prefs.callmethod-tooltip": {
+    "message": "Wähle aus, auf welche Art PassFF pass ausführen soll."
+  },
+  "passff.prefs.callmethod": {
+    "message": "Aufrufmethode"
+  },
+  "passff.prefs.direct_radio_label": {
+    "message": "Direktaufruf"
+  },
+  "passff.prefs.shell_radio_label": {
+    "message": "über eine Shell"
+  },
+  "passff.prefs.default_length_tooltip": {
+    "message": "Standardlänge für die Passwortgenerierung"
+  },
+  "passff.prefs.default_length_label": {
+    "message": "Standard Passwortlänge"
+  },
+  "passff.prefs.default_include_symbols_tooltip": {
+    "message": "Sollen generierte Passwörter standardmäßig Symbole enthalten?"
+  },
+  "passff.prefs.default_include_symbols_label": {
+    "message": "Symbole standardmäßig verwenden"
+  },
+  "passff.prefs.preferred_new_method_tooltip": {
+    "message": "Sollen neue Passwörter standardmäßig generiert oder eingetragen werden?"
+  },
+  "passff.prefs.preferred_new_method_label": {
+    "message": "Bevorzugte Methode"
+  },
+  "passff.prefs.prefer_generate": {
+    "message": "Generieren"
+  },
+  "passff.prefs.prefer_insert": {
+    "message": "Eintragen"
+  },
+  "passff.newpassword.window.title": {
+    "message": "Neues Passwort"
+  },
+  "passff.newpassword.window.header": {
+    "message": "Neues Passwort hinzufügen"
+  },
+  "passff.newpassword.tabs.generate": {
+    "message": "Generieren"
+  },
+  "passff.newpassword.tabs.insert": {
+    "message": "Eintragen"
+  },
+  "passff.newpassword.inputs.password_name_label": {
+    "message": "Bezeichnung"
+  },
+  "passff.newpassword.inputs.password_label": {
+    "message": "Passwort"
+  },
+  "passff.newpassword.inputs.password_confirmation_label": {
+    "message": "Passwort bestätigen"
+  },
+  "passff.newpassword.inputs.additional_info_label": {
+    "message": "Zusatzangaben"
+  },
+  "passff.newpassword.inputs.password_length_label": {
+    "message": "Länge"
+  },
+  "passff.newpassword.inputs.include_symbols_label": {
+    "message": "Symbole verwenden?"
+  },
+  "passff.newpassword.inputs.add_password_button_label": {
+    "message": "Passwort hinzufügen"
+  },
+  "passff.newpassword.inputs.generate_password_button_label": {
+    "message": "Passwort generieren"
+  },
+  "passff.newpassword.inputs.overwrite_password_prompt": {
+    "message": "Dieses Passwort existiert bereits. Soll es wirklich überschrieben werden?"
+  },
+  "passff.newpassword.errors.name_is_required": {
+    "message": "Bezeichnung muss angegeben werden"
+  },
+  "passff.newpassword.errors.password_is_required": {
+    "message": "Passwort muss angegeben werden"
+  },
+  "passff.newpassword.errors.password_confirmation_mismatch": {
+    "message": "Passwortbestätigung stimmt nicht überein"
+  },
+  "passff.newpassword.errors.pass_execution_failed": {
+    "message": "Ups, etwas ist schiefgegangen."
+  },
+  "passff.newpassword.errors.unexpected_error": {
+    "message": "Ein unerwarteter Fehler ist aufgetreten."
+  },
+  "passff.errors.unexpected_error": {
+    "message": "Ein unerwarteter Fehler ist aufgetreten. Stellen Sie sicher, dass die Einstellungen korrekt sind und dass die Host-App installiert ist."
+  }
+}

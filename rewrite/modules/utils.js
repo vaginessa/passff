@@ -98,6 +98,8 @@ PassFF.Utils = (function() {
       }
       return result;
     },
+
+    translate: browser.i18n.getMessage,
   };
 
   return _;
