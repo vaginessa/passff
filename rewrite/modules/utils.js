@@ -44,6 +44,12 @@ PassFF.Utils = (function() {
       };
     },
 
+    partial: function(func, ...partiallyAppliedArgs) {
+      return function(...restArgs) {
+        return func.call(null, ...partiallyAppliedArgs, ...restArgs);
+      };
+    },
+
     each: each,
 
     map: function(collection, func) {

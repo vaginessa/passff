@@ -23,22 +23,68 @@ PassFF.Menu = (function() {
   };
 
   let translate = PassFF.Utils.translate;
+  let hideMenu = function() {
+    window.close();
+  };
+  let createBackItem = function(password) {
+    let backItem = document.createElement('option'),
+        goBack = PassFF.Utils.partial(displayPasswords, password.children);
+    backItem.textContent = "..";
+    backItem.addEventListener('click', goBack);
+    return backItem;
+  };
 
-  let displayPasswords = function(passwords) {
+  let displayPasswords = function(passwords, includeBackButton=true) {
     let list = document.getElementById(Ids.entrieslist);
     // empty the list
     while (list.firstChild) list.removeChild(list.firstChild);
     // re-populate it with the new contents
+    // if not a first-level node, include a back button
+    if (includeBackButton && passwords[0] && passwords[0].parent && passwords[0].parent.parent) {
+      list.appendChild(createBackItem(passwords[0].parent.parent));
+    }
     passwords.forEach(function(password) {
-      let listItem = document.createElement('option');
-      log.debug("Password object:", password);
-      listItem.textContent = password.fullName;
+      let listItem = document.createElement('option'),
+          onClick;
+      if (password.children.length > 0) {
+        onClick = PassFF.Utils.partial(displayPasswords, password.children);
+      } else {
+        onClick = PassFF.Utils.partial(displayPasswordActions, password);
+      }
+      listItem.textContent = `${password.fullName}${password.children.length ? "/" : ""}`;
+      listItem.addEventListener('click', onClick);
       list.appendChild(listItem);
     });
   };
 
+  let displayPasswordActions = function(password) {
+    let list = document.getElementById(Ids.entrieslist);
+    // empty the list
+    while (list.firstChild) list.removeChild(list.firstChild);
+
+    // if not a first-level node, include a back button
+    if (password.parent) {
+      list.appendChild(createBackItem(password.parent));
+    }
+    let fillItem = document.createElement('option');
+    fillItem.textContent = "Fill";
+    fillItem.addEventListener('click', function() {
+      let shouldSubmit = false;
+      PassFF.Messenger.publish('enterLogin', password.fullName, shouldSubmit)
+        .then(hideMenu);
+    });
+    list.appendChild(fillItem);
+  };
+
   let loadAndDisplayContextualPasswords = function() {
     PassFF.Messenger.publish('getContextualPasswords')
+      .then((passwords) => {
+        let includeBackButton = false;
+        return displayPasswords(passwords, includeBackButton);
+      });
+  };
+  let loadAndDisplayRootNodes = function() {
+    PassFF.Messenger.publish('getRootPasswords')
       .then(displayPasswords);
   };
 
@@ -56,7 +102,7 @@ PassFF.Menu = (function() {
     let showAllButton = doc.querySelector('.actions div:nth-child(1) > button');
     showAllButton.setAttribute('id', Ids.rootbutton);
     showAllButton.textContent = translate('passff.button.root.label');
-    showAllButton.addEventListener('click', PassFF.Menu.onRootButtonCommand);
+    showAllButton.addEventListener('click', loadAndDisplayRootNodes);
 
     let showMatchingButton = doc.querySelector('.actions div:nth-child(2) > button');
     showMatchingButton.setAttribute('id', Ids.contextbutton);

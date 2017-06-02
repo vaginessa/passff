@@ -47,8 +47,9 @@ var PassFF = (function() {
     init: function() {
       log.debug("PassFF.init");
       PassFF.Preferences.load();
-      PassFF.PasswordStore.load().then(handleTabUpdate);
-      hookBrowserEvents();
+      PassFF.PasswordStore.load()
+        .then(hookBrowserEvents)
+        .then(handleTabUpdate);
     },
     getActiveTab: getActiveTab,
   };

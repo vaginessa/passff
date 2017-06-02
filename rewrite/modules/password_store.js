@@ -7,7 +7,7 @@ PassFF.PasswordStore = (function() {
   let getFullName = function(node) {
     let parts = [node.value],
       currentAncestor = node.parent;
-    while (currentAncestor) {
+    while (currentAncestor && currentAncestor.parent) {
       parts.unshift(currentAncestor.value);
       currentAncestor = currentAncestor.parent;
     }
@@ -102,7 +102,7 @@ PassFF.PasswordStore = (function() {
           'TREE_CHARSET': 'ISO-8859-1',
           'GNUPGHOME': PassFF.Preferences.get('gnupgHome'),
         }, PassFF.Utils.isBlank);
-        sendNativeMessage().then((passListOutput) => {
+        return sendNativeMessage().then((passListOutput) => {
           let annotatedLines = cleanAndAnnotateLines(passListOutput),
               rootNode       = new TreeNode(null, 0, null),
               currentParent  = rootNode,
@@ -161,6 +161,10 @@ PassFF.PasswordStore = (function() {
 
   return {
     load: loadPasswords,
+
+    rootEntries: function() {
+      return passwordsTree.children;
+    },
 
     entriesMatchingHostname: function(hostname) {
       let matches = [];
