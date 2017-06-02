@@ -22,10 +22,25 @@ PassFF.Menu = (function() {
     menu: 'passff-menu-',
   };
 
+  let Keycodes = {
+    RETURN      : 13,
+    LEFT_ARROW  : 37,
+    UP_ARROW    : 38,
+    RIGHT_ARROW : 39,
+    DOWN_ARROW  : 40,
+  };
+
   let translate = PassFF.Utils.translate;
   let hideMenu = function() {
     window.close();
   };
+
+
+  let doToTopResult = function(func) {
+    let topResult = document.getElementById(Ids.entrieslist).firstChild;
+    if (topResult) func(topResult);
+  };
+
   let createBackItem = function(password) {
     let backItem = document.createElement('option'),
         goBack = PassFF.Utils.partial(displayPasswords, password.children);
@@ -73,6 +88,7 @@ PassFF.Menu = (function() {
       PassFF.Messenger.publish('enterLogin', password.fullName, shouldSubmit)
         .then(hideMenu);
     });
+    fillItem.selected = true;
     list.appendChild(fillItem);
   };
 
@@ -87,6 +103,34 @@ PassFF.Menu = (function() {
     PassFF.Messenger.publish('getRootPasswords')
       .then(displayPasswords);
   };
+  let handleSearchKeypress = function(keyupEvent) {
+    switch (keyupEvent.keyCode) {
+      case Keycodes.RETURN :
+        doToTopResult((topResult) => topResult.click());
+        break;
+      case Keycodes.LEFT_ARROW:
+      case Keycodes.RIGHT_ARROW:
+      case Keycodes.UP_ARROW:
+        // no-op; let the user move their typing cursor
+        break;
+      case Keycodes.DOWN_ARROW:
+        doToTopResult((topResult) => topResult.focus());
+        break;
+      default :
+        PassFF.Messenger.publish('getPasswordSearchResults', keyupEvent.target.value)
+          .then((passwords) => {
+            let includeBackButton = false;
+            return displayPasswords(passwords, includeBackButton);
+          }).then(() => {
+            doToTopResult((topResult) => topResult.selected = true);
+          });
+    }
+  };
+
+  let focusSearchBar = function() {
+    // autofocus attribute on searchbox doesn't seem to work
+    document.getElementById(Ids.searchbox).focus();
+  };
 
   let createStaticMenu = function(doc) {
     let panel = doc.querySelector('body')
@@ -95,9 +139,7 @@ PassFF.Menu = (function() {
     let searchBox = doc.querySelector('.searchbar input[type=text]');
     searchBox.setAttribute('id', Ids.searchbox);
     searchBox.setAttribute('placeholder', translate('passff.toolbar.search.placeholder'));
-    searchBox.addEventListener('click', function (e) { e.target.select(); });
-    searchBox.addEventListener('keypress', PassFF.Menu.onSearchKeypress);
-    searchBox.addEventListener('keyup', PassFF.Menu.onSearchKeyup);
+    searchBox.addEventListener('keyup', handleSearchKeypress);
 
     let showAllButton = doc.querySelector('.actions div:nth-child(1) > button');
     showAllButton.setAttribute('id', Ids.rootbutton);
@@ -135,6 +177,8 @@ PassFF.Menu = (function() {
     init: function() {
       createStaticMenu(document);
       loadAndDisplayContextualPasswords();
+      // focus searchbar -- not sure why, but doesn't work w/o setTimeout
+      window.setTimeout(focusSearchBar, 0);
     },
   };
 })();

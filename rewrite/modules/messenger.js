@@ -4,6 +4,7 @@ PassFF.Messenger = (function() {
   let Actions = new Set([
     'getRootPasswords',
     'getContextualPasswords',
+    'getPasswordSearchResults',
     'enterLogin',
   ]);
 
@@ -35,6 +36,9 @@ PassFF.Messenger = (function() {
           });
         case getAction('getRootPasswords') :
           return Promise.resolve(PassFF.PasswordStore.rootEntries());
+        case getAction('getPasswordSearchResults') :
+          let searchTerm = request.params[0];
+          return Promise.resolve(PassFF.PasswordStore.entriesMatchingSearchTerm(searchTerm));
         case getAction('enterLogin') :
           return PassFF.getActiveTab()
             .then((tab) => {

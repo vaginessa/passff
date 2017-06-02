@@ -159,6 +159,18 @@ PassFF.PasswordStore = (function() {
     return data;
   };
 
+
+  let searchForPasswords = function(matchFunc) {
+    let matches = [];
+    traverseTree(passwordsTree, PassFF.Utils.partial(matchFunc, matches));
+    matches.sort(function(a, b) {
+      // sort by score descending (subtraction here is to cause sort to work with numbers)
+      return b.score - a.score;
+    });
+    log.debug("Entries matching search:", matches);
+    return matches.map(PassFF.Utils.property('entry'));
+  };
+
   return {
     load: loadPasswords,
 
@@ -167,8 +179,7 @@ PassFF.PasswordStore = (function() {
     },
 
     entriesMatchingHostname: function(hostname) {
-      let matches = [];
-      traverseTree(passwordsTree, function(password) {
+      return searchForPasswords(function(matches, password) {
         let hostnameParts = hostname.split(/\.(co\.\w\w)?/).filter(Boolean);
         for (let i=0; i < hostnameParts.length - 1; i++) {
           let hostname = hostnameParts.slice(i).join('.'),
@@ -179,12 +190,19 @@ PassFF.PasswordStore = (function() {
           }
         }
       });
-      matches.sort(function(a, b) {
-        // sort by score descending (subtraction here is to cause sort to work with numbers)
-        return b.score - a.score;
-      });
-      log.debug("Entries matching URL:", matches);
-      return matches.map(PassFF.Utils.property('entry'));
+    },
+
+    entriesMatchingSearchTerm: function(searchTerm) {
+      if (searchTerm) {
+        return searchForPasswords(function(matches, password) {
+          let score = fuzzaldrin.score(password.fullName, searchTerm);
+          if (score > 0) {
+            matches.push({entry: password, score: score});
+          }
+        });
+      } else {
+        return this.rootEntries();
+      }
     },
 
     loadPassword: function(passwordFullName) {
