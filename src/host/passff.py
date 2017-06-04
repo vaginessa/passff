@@ -8,7 +8,7 @@ def getMessage():
     if len(rawLength) == 0:
         sys.exit(0)
     messageLength = struct.unpack('@I', rawLength)[0]
-    message = sys.stdin.buffer.read(messageLength).decode("utf-8")
+    message = sys.stdin.buffer.read(messageLength).decode('utf-8')
     return json.loads(message)
 
 # Encode a message for transmission, given its content.
@@ -25,9 +25,9 @@ def sendMessage(encodedMessage):
 
 receivedMessage = getMessage()
 env = dict(os.environ)
-if "HOME" not in env:
-    env["HOME"] = os.path.expanduser('~')
-if receivedMessage['command'][-4:] == "pass":
+if 'HOME' not in env:
+    env['HOME'] = os.path.expanduser('~')
+if receivedMessage['command'][-4:] == 'pass':
     for key, val in receivedMessage['environment'].items():
         env[key] = val
     cmd = [receivedMessage['command']] + receivedMessage['arguments']
@@ -45,19 +45,22 @@ if receivedMessage['command'][-4:] == "pass":
     else:
       proc_out, proc_err = proc.communicate()
     sendMessage(encodeMessage({
-        "exitCode": proc.returncode,
-        "stdout": proc_out.decode(receivedMessage['charset']),
-        "stderr": proc_err.decode(receivedMessage['charset']),
-        "other": ""
+        'exitCode': proc.returncode,
+        'stdout': proc_out.decode(receivedMessage['charset']),
+        'stderr': proc_err.decode(receivedMessage['charset']),
+        'other': ''
     }))
-elif receivedMessage['command'] == "env":
-    sendMessage(encodeMessage(env))
-elif receivedMessage['command'] == "gpgAgentEnv":
+elif receivedMessage['command'] == 'env':
+    sendMessage(encodeMessage({
+        'exitCode': 0,
+        'stdout': env
+    }))
+elif receivedMessage['command'] == 'gpgAgentEnv':
     gpgAgentEnv = {}
-    if "GNOME_KEYRING_CONTROL" in env:
+    if 'GNOME_KEYRING_CONTROL' in env:
         gpgAgentEnv['GNOME_KEYRING_CONTROL'] = env['GNOME_KEYRING_CONTROL']
     else:
-        gpgAgentEnv['GNOME_KEYRING_CONTROL'] = ""
+        gpgAgentEnv['GNOME_KEYRING_CONTROL'] = ''
 
     gpgAgentInfo = receivedMessage['arguments'][0]
     if os.path.isabs(gpgAgentInfo):
@@ -75,9 +78,12 @@ elif receivedMessage['command'] == "gpgAgentEnv":
                     val = match.group(2).strip()
                     gpgAgentEnv[key] = val
     except:
-        if "GPG_AGENT_INFO" in env:
+        if 'GPG_AGENT_INFO' in env:
             gpgAgentEnv['GPG_AGENT_INFO'] = env['GPG_AGENT_INFO']
         else:
-            gpgAgentEnv['GPG_AGENT_INFO'] = ""
-    sendMessage(encodeMessage(gpgAgentEnv))
+            gpgAgentEnv['GPG_AGENT_INFO'] = ''
+    sendMessage(encodeMessage({
+        'exitCode': 0,
+        'stdout': gpgAgentEnv
+    }))
 

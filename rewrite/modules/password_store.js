@@ -64,7 +64,7 @@ PassFF.PasswordStore = (function() {
     return browser.runtime.sendNativeMessage('passff', params)
       .then((result) => {
         if (result.exitCode !== 0) {
-          log.warn("Native message failed:", result.exitCode, result.stderr, result.stdout);
+          log.warn("Native message failed:", result);
         }
         return result;
       }, (ex) => {
@@ -94,7 +94,7 @@ PassFF.PasswordStore = (function() {
   };
 
   let loadPasswords = function() {
-    return browser.runtime.sendNativeMessage('passff', {command: 'env'})
+    return sendNativeMessage({command: 'env'})
       .then((result) => {
         environment = PassFF.Utils.reject({
           'HOME': PassFF.Preferences.get('home'),
@@ -206,7 +206,7 @@ PassFF.PasswordStore = (function() {
     },
 
     loadPassword: function(passwordFullName) {
-      return sendNativeMessage("show", passwordFullName).then(parsePasswordData);
+      return sendNativeMessage('show', passwordFullName).then(parsePasswordData);
     },
   };
 })();
