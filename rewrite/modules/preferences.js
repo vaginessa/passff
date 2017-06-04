@@ -42,14 +42,11 @@ PassFF.Preferences = (function() {
         break;
     }
 
-    for (let [prefName, prefVal] in Iterator(preferences)) {
-      let configuredVal = browser.storage.local.get(prefName);
-      if (PassFF.Utils.isUndefined(configuredVal)) {
-        preferences[prefName] = configuredVal;
-      }
-    }
-
-    log.debug("Loaded preferences:", preferences);
+    return browser.storage.local.get(Object.keys(preferences))
+      .then((overrides) => {
+        Object.assign(preferences, overrides);
+        log.debug("Loaded preferences:", preferences);
+      });
   };
 
   return {
