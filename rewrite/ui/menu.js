@@ -82,14 +82,52 @@ PassFF.Menu = (function() {
       list.appendChild(createBackItem(password.parent));
     }
     let fillItem = document.createElement('option');
-    fillItem.textContent = "Fill";
+    fillItem.textContent = translate('passff.menu.fill');
     fillItem.addEventListener('click', function() {
-      let shouldSubmit = false;
-      PassFF.Messenger.publish('enterLogin', password.fullName, shouldSubmit)
+      PassFF.Messenger.publish('enterLogin', password.fullName, {submit: false})
         .then(hideMenu);
     });
     fillItem.selected = true;
+    let fillAndSubmitItem = document.createElement('option');
+    fillAndSubmitItem.textContent = translate('passff.menu.fill_and_submit');
+    fillAndSubmitItem.addEventListener('click', function() {
+      PassFF.Messenger.publish('enterLogin', password.fullName, {submit: true})
+        .then(hideMenu);
+    });
+    let goToItem = document.createElement('option');
+    goToItem.textContent = translate('passff.menu.goto');
+    goToItem.addEventListener('click', function() {
+      // TODO: can we detect if it was a shift+click?
+      PassFF.Messenger.publish('goToURL', password.fullName)
+        .then(hideMenu);
+    });
+    let goToAndFillItem = document.createElement('option');
+    goToAndFillItem.textContent = translate('passff.menu.goto_fill');
+    goToAndFillItem.addEventListener('click', function() {
+      // TODO: can we detect if it was a shift+click?
+      PassFF.Messenger.publish('goToURL', password.fullName)
+        .then(([passwordData, tabId]) => {
+          return PassFF.Messenger.publish('enterLogin', password.fullName, {
+            submit: false, passwordData: passwordData, tabId: tabId
+          });
+        }).then(hideMenu);
+    });
+    let goToFillAndSubmitItem = document.createElement('option');
+    goToFillAndSubmitItem.textContent = translate('passff.menu.goto_fill_and_submit');
+    goToFillAndSubmitItem.addEventListener('click', function() {
+      // TODO: can we detect if it was a shift+click?
+      PassFF.Messenger.publish('goToURL', password.fullName)
+        .then(([passwordData, tabId]) => {
+          return PassFF.Messenger.publish('enterLogin', password.fullName, {
+            submit: true, passwordData: passwordData, tabId: tabId
+          });
+        }).then(hideMenu);
+    });
     list.appendChild(fillItem);
+    list.appendChild(fillAndSubmitItem);
+    list.appendChild(goToItem);
+    list.appendChild(goToAndFillItem);
+    list.appendChild(goToFillAndSubmitItem);
   };
 
   let loadAndDisplayContextualPasswords = function() {
@@ -111,10 +149,8 @@ PassFF.Menu = (function() {
       case Keycodes.LEFT_ARROW:
       case Keycodes.RIGHT_ARROW:
       case Keycodes.UP_ARROW:
-        // no-op; let the user move their typing cursor
-        break;
       case Keycodes.DOWN_ARROW:
-        doToTopResult((topResult) => topResult.focus());
+        // no-op; let the user move their typing cursor
         break;
       default :
         PassFF.Messenger.publish('getPasswordSearchResults', keyupEvent.target.value)

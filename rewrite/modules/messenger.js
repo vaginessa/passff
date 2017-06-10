@@ -6,6 +6,7 @@ PassFF.Messenger = (function() {
     'getContextualPasswords',
     'getPasswordSearchResults',
     'enterLogin',
+    'goToURL',
   ]);
 
   let getAction = function(actionKey) {
@@ -28,6 +29,7 @@ PassFF.Messenger = (function() {
     },
 
     dispatch: function(request, sender, sendResponse) {
+      let searchTerm, passwordName, submit, passwordData, tabId, promise;
       switch (request.action) {
         case getAction('getContextualPasswords') :
           return PassFF.getActiveTab().then((tab) => {
@@ -37,17 +39,39 @@ PassFF.Messenger = (function() {
         case getAction('getRootPasswords') :
           return Promise.resolve(PassFF.PasswordStore.rootEntries());
         case getAction('getPasswordSearchResults') :
-          let searchTerm = request.params[0];
+          searchTerm = request.params[0];
           return Promise.resolve(PassFF.PasswordStore.entriesMatchingSearchTerm(searchTerm));
         case getAction('enterLogin') :
-          return PassFF.getActiveTab()
-            .then((tab) => {
-              if (!tab || !tab.url || tab.status !== 'complete') return; // DUP 1
-              let [passwordName, shouldSubmit] = request.params;
-              PassFF.PasswordStore.loadPassword(passwordName)
-                .then((passwordData) => {
-                  PassFF.Page.enterLogin(passwordData, shouldSubmit, tab.id);
-                });
+          [passwordName, {submit, passwordData, tabId}] = request.params;
+          if (PassFF.Utils.isUndefined(tabId)) {
+            promise = PassFF.getActiveTab().then((tab) => {
+              if (!tab || !tab.url || tab.status !== 'complete') { // DUP 1
+                return Promise.reject("Tab is not valid or not ready");
+              } else {
+                return Promise.resolve(tab.id);
+              }
+            });
+          } else {
+            promise = Promise.resolve(tabId);
+          }
+          if (PassFF.Utils.isUndefined(passwordData)) {
+            promise = promise.then((tabId) => {
+              return PassFF.PasswordStore.loadPassword(passwordName)
+                .then((passwordData) => [passwordData, tabId]);
+            });
+          } else {
+            promise = promise.then((tabId) => [passwordData, tabId]);
+          }
+          return promise.then(([passwordData, tabId]) => {
+            return PassFF.Page.enterLogin(passwordData, submit, tabId);
+          });
+        case getAction('goToURL') :
+          passwordName = request.params[0];
+          return PassFF.PasswordStore.loadPassword(passwordName)
+            .then((passwordData) => {
+              // TODO: handle error if passwordData doesn't have url
+              return browser.tabs.create({url: passwordData.url})
+                .then((tab) => [passwordData, tab.id]);
             });
       };
     },
