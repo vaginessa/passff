@@ -7,6 +7,7 @@ PassFF.Messenger = (function() {
     'getPasswordSearchResults',
     'enterLogin',
     'goToURL',
+    'reload',
   ]);
 
   let getAction = function(actionKey) {
@@ -89,6 +90,8 @@ PassFF.Messenger = (function() {
                 });
               }
             });
+        case getAction('reload') :
+          return Promise.resolve(PassFF.reload());
       };
     },
   };

@@ -167,6 +167,9 @@ PassFF.Menu = (function() {
           });
     }
   };
+  let reloadPlugin = function() {
+    PassFF.Messenger.publish('reload');
+  };
 
   let focusSearchBar = function() {
     // autofocus attribute on searchbox doesn't seem to work
@@ -196,10 +199,10 @@ PassFF.Menu = (function() {
     entryList.setAttribute('id', Ids.entrieslist);
     entryList.addEventListener('keydown', PassFF.Menu.onListItemkeydown);
 
-    let refreshButton = doc.querySelector('.actions button.reload');
-    refreshButton.setAttribute('id', Ids.refreshmenuitem);
-    refreshButton.setAttribute('title', translate('passff.toolbar.refresh.label'));
-    refreshButton.addEventListener('click', PassFF.Menu.onRefresh);
+    let reloadButton = doc.querySelector('.actions button.reload');
+    reloadButton.setAttribute('id', Ids.refreshmenuitem);
+    reloadButton.setAttribute('title', translate('passff.toolbar.refresh.label'));
+    reloadButton.addEventListener('click', reloadPlugin);
 
     let prefsButton = doc.querySelector('.actions button.config');
     prefsButton.setAttribute('id', Ids.prefsmenuitem);

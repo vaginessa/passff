@@ -51,6 +51,7 @@ PassFF.Preferences = (function() {
 
   return {
     load: loadPreferences,
+
     get: function(preference) {
       if (preferences.hasOwnProperty(preference)) {
         return preferences[preference];

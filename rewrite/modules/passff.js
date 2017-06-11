@@ -43,6 +43,12 @@ var PassFF = (function() {
     browser.runtime.onMessage.addListener(PassFF.Messenger.dispatch);
   };
 
+  let unhookBrowserEvents = function() {
+    browser.tabs.onUpdated.removeListener(handleTabUpdate);
+    browser.tabs.onActivated.removeListener(handleTabUpdate);
+    browser.runtime.onMessage.removeListener(PassFF.Messenger.dispatch);
+  };
+
   return {
     init: function() {
       log.debug("PassFF.init");
@@ -51,6 +57,15 @@ var PassFF = (function() {
         .then(hookBrowserEvents)
         .then(handleTabUpdate);
     },
+
     getActiveTab: getActiveTab,
+
+    reload: function() {
+      log.debug("Reloading PassFF");
+      unhookBrowserEvents();
+      PassFF.Preferences.load()
+        .then(PassFF.PasswordStore.load)
+        .then(hookBrowserEvents);
+    },
   };
 })();
