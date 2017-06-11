@@ -17,7 +17,7 @@ var log;
 var PassFF = (function() {
   let getActiveTab = function() {
     return browser.tabs.query({active: true, currentWindow: true})
-             .then((tabs) => { return tabs[0]; });
+      .then((tabs) => tabs[0]);
   }
 
   let handleTabUpdate = function() {

@@ -29,7 +29,7 @@ PassFF.Messenger = (function() {
     },
 
     dispatch: function(request, sender, sendResponse) {
-      let searchTerm, passwordName, submit, passwordData, tabId, promise;
+      let searchTerm, passwordName, submit, passwordData, tabId, promise, newWindow;
       switch (request.action) {
         case getAction('getContextualPasswords') :
           return PassFF.getActiveTab().then((tab) => {
@@ -66,12 +66,28 @@ PassFF.Messenger = (function() {
             return PassFF.Page.enterLogin(passwordData, submit, tabId);
           });
         case getAction('goToURL') :
-          passwordName = request.params[0];
+          [passwordName, {newWindow}] = request.params;
           return PassFF.PasswordStore.loadPassword(passwordName)
             .then((passwordData) => {
               // TODO: handle error if passwordData doesn't have url
-              return browser.tabs.create({url: passwordData.url})
-                .then((tab) => [passwordData, tab.id]);
+              if (newWindow) {
+                return browser.tabs.create({url: passwordData.url})
+                  .then((tab) => [passwordData, tab.id]);
+              } else {
+                return PassFF.getActiveTab().then((tab) => {
+                  return browser.tabs.update(tab.id, {url: passwordData.url});
+                }).then((tab) => {
+                  return new Promise((resolve, reject) => {
+                    let callback = (updatedTabId, changes, updatedTab) => {
+                      if (updatedTabId === tab.id && updatedTab.status === 'complete') {
+                        resolve([passwordData, tab.id]);
+                        browser.tabs.onUpdated.removeListener(callback);
+                      }
+                    };
+                    browser.tabs.onUpdated.addListener(callback);
+                  });
+                });
+              }
             });
       };
     },

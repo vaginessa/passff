@@ -88,41 +88,46 @@ PassFF.Menu = (function() {
         .then(hideMenu);
     });
     fillItem.selected = true;
+
     let fillAndSubmitItem = document.createElement('option');
     fillAndSubmitItem.textContent = translate('passff.menu.fill_and_submit');
     fillAndSubmitItem.addEventListener('click', function() {
       PassFF.Messenger.publish('enterLogin', password.fullName, {submit: true})
         .then(hideMenu);
     });
+
     let goToItem = document.createElement('option');
     goToItem.textContent = translate('passff.menu.goto');
-    goToItem.addEventListener('click', function() {
-      // TODO: can we detect if it was a shift+click?
-      PassFF.Messenger.publish('goToURL', password.fullName)
-        .then(hideMenu);
+    goToItem.addEventListener('click', function(event) {
+      PassFF.Messenger.publish('goToURL', password.fullName, {
+        newWindow: event.ctrlKey || event.metaKey
+      }).then(hideMenu);
     });
+
     let goToAndFillItem = document.createElement('option');
     goToAndFillItem.textContent = translate('passff.menu.goto_fill');
-    goToAndFillItem.addEventListener('click', function() {
-      // TODO: can we detect if it was a shift+click?
-      PassFF.Messenger.publish('goToURL', password.fullName)
-        .then(([passwordData, tabId]) => {
-          return PassFF.Messenger.publish('enterLogin', password.fullName, {
-            submit: false, passwordData: passwordData, tabId: tabId
-          });
-        }).then(hideMenu);
+    goToAndFillItem.addEventListener('click', function(event) {
+      PassFF.Messenger.publish('goToURL', password.fullName, {
+        newWindow: event.ctrlKey || event.metaKey,
+      }).then(([passwordData, tabId]) => {
+        return PassFF.Messenger.publish('enterLogin', password.fullName, {
+          submit: false, passwordData: passwordData, tabId: tabId
+        });
+      }).then(hideMenu);
     });
+
     let goToFillAndSubmitItem = document.createElement('option');
     goToFillAndSubmitItem.textContent = translate('passff.menu.goto_fill_and_submit');
-    goToFillAndSubmitItem.addEventListener('click', function() {
-      // TODO: can we detect if it was a shift+click?
-      PassFF.Messenger.publish('goToURL', password.fullName)
-        .then(([passwordData, tabId]) => {
-          return PassFF.Messenger.publish('enterLogin', password.fullName, {
-            submit: true, passwordData: passwordData, tabId: tabId
-          });
-        }).then(hideMenu);
+    goToFillAndSubmitItem.addEventListener('click', function(event) {
+      PassFF.Messenger.publish('goToURL', password.fullName, {
+        newWindow: event.ctrlKey || event.metaKey,
+      }).then(([passwordData, tabId]) => {
+        return PassFF.Messenger.publish('enterLogin', password.fullName, {
+          submit: true, passwordData: passwordData, tabId: tabId
+        });
+      }).then(hideMenu);
     });
+
     list.appendChild(fillItem);
     list.appendChild(fillAndSubmitItem);
     list.appendChild(goToItem);
